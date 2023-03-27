@@ -1,4 +1,19 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Post, Patch } from '@nestjs/common';
+import { ServicesService } from './services.service';
 
-@Controller('services')
-export class ServicesController {}
+@Controller('api/v1/services')
+export class ServicesController {
+  constructor(private servicesService: ServicesService) {}
+
+  @Get()
+  listServices() {}
+
+  @Post()
+  createServices() {}
+
+  @Patch('/:id')
+  updatesServices() {}
+
+  @Get('/:id')
+  getServicesById() {}
+}
