@@ -8,7 +8,13 @@ import { AuthModule } from './auth/auth.module';
 import { ServicesModule } from './services/services.module';
 
 @Module({
-  imports: [ClientsModule, MechanicsModule, PartsModule, AuthModule, ServicesModule],
+  imports: [
+    ClientsModule,
+    MechanicsModule,
+    PartsModule,
+    AuthModule,
+    ServicesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
