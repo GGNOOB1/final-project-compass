@@ -1,7 +1,7 @@
 import { Entity, Column } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm/decorator/columns/PrimaryGeneratedColumn';
 
-@Entity()
+@Entity({ name: 'clients' })
 export class Clients {
   @PrimaryGeneratedColumn('uuid')
   id: string;

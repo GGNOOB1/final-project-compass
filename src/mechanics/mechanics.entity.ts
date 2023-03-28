@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+import { Specialties } from './specialties.entity';
 
 @Entity()
 export class Mechanics {
@@ -20,8 +27,11 @@ export class Mechanics {
   @Column()
   email: string;
 
-  @Column()
-  specialties: [string];
+  @OneToMany(() => Specialties, (specialties) => specialties.specialty, {
+    eager: true,
+  })
+  @JoinColumn()
+  specialties: Specialties[];
 
   @Column()
   hiringDate: Date;
