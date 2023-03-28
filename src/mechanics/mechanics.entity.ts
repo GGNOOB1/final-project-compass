@@ -27,7 +27,7 @@ export class Mechanics {
   hiringDate: Date;
 
   @Column()
-  serviceFeel: number;
+  serviceFee: number;
 
   @Column()
   status: string;

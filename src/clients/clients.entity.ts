@@ -41,20 +41,4 @@ export class Clients {
 
   @Column()
   city: string;
-
-  /*
-  id: string;
-  name: string;
-  cpf_cnpj: string;
-  client_type: string;
-  birthdate: Date;
-  phone: string;
-  email: string;
-  password: string;
-  zipcode: string;
-  street: string;
-  number: string;
-  neighbourhood: string;
-  city: string;
-  */
 }
