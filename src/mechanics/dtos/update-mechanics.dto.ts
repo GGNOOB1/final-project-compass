@@ -14,6 +14,7 @@ import {
 } from 'class-validator';
 
 import { CpfValidator } from 'src/validators/cpf.validator';
+import { DateValidator } from 'src/validators/date.validator';
 
 export class UpdateMechanicsDto {
   @IsOptional()
@@ -30,7 +31,8 @@ export class UpdateMechanicsDto {
   cpf: string;
 
   @IsOptional()
-  @IsDateString()
+  @IsString()
+  @Validate(DateValidator)
   @IsNotEmpty()
   birthday: Date;
 
