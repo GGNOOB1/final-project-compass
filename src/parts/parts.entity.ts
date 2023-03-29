@@ -1,10 +1,9 @@
-import { Services } from 'src/services/services.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Parts {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  partId: string;
 
   @Column()
   title: string;
@@ -17,7 +16,4 @@ export class Parts {
 
   @Column()
   unitPrice: string;
-
-  @ManyToOne(() => Services, (services) => services.parts)
-  services: Services;
 }

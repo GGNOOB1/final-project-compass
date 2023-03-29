@@ -12,5 +12,5 @@ export class Specialties {
   name: string;
 
   @ManyToOne(() => Mechanics, (mechanics) => mechanics.specialties)
-  specialty: Specialties;
+  mechanic: Mechanics;
 }

@@ -5,6 +5,8 @@ import {
   Column,
   OneToMany,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -28,10 +30,11 @@ export class Services {
   description: string;
 
   // Relationship one to many
-  @OneToMany(() => Parts, (parts) => parts.services, {
-    eager: true,
-  })
-  @JoinColumn({ name: 'Parts' })
+  // @OneToMany(() => Parts, (parts) => parts.services, {
+  //   eager: true,
+  // })
+  @ManyToMany(() => Parts)
+  @JoinTable()
   parts: Parts[];
 
   @Column()

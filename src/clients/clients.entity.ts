@@ -1,5 +1,6 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, Index, OneToMany } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm/decorator/columns/PrimaryGeneratedColumn';
+import { Cars } from './cars/cars.entity';
 
 @Entity({ name: 'clients' })
 export class Clients {
@@ -15,13 +16,14 @@ export class Clients {
   @Column()
   client_type: string;
 
-  @Column()
-  birthdate: Date;
+  @Column({ type: 'timestamp with time zone' })
+  birthday: Date;
 
   @Column()
   phone: string;
 
   @Column()
+  @Index({ unique: true })
   email: string;
 
   @Column()
@@ -41,4 +43,7 @@ export class Clients {
 
   @Column()
   city: string;
+
+  @OneToMany(() => Cars, (cars) => cars.client)
+  cars: Cars[];
 }
