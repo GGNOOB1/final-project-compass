@@ -10,9 +10,12 @@ import {
   IsPhoneNumber,
   IsEmail,
   IsArray,
+  IsEnum,
 } from 'class-validator';
 
 import { CpfValidator } from 'src/validators/cpf.validator';
+import { DateValidator } from 'src/validators/date.validator';
+import { Status } from '../utils/status-enum';
 
 export class CreateMechanicsDto {
   @IsString()
@@ -26,11 +29,12 @@ export class CreateMechanicsDto {
   @IsNotEmpty()
   cpf: string;
 
-  @IsDateString()
+  @IsString()
+  @Validate(DateValidator)
   @IsNotEmpty()
-  birthday: Date;
+  birthday: string;
 
-  @IsPhoneNumber()
+  @IsPhoneNumber('BR')
   @IsString()
   @IsNotEmpty()
   phone: string;
@@ -52,15 +56,17 @@ export class CreateMechanicsDto {
   @IsArray()
   specialties: [string];
 
-  @IsDateString()
+  @IsString()
+  @Validate(DateValidator)
   @IsNotEmpty()
-  hiringDate: Date;
+  hiringDate: string;
 
   @IsNumber()
   @IsNotEmpty()
   serviceFee: number;
 
-  @IsBoolean()
+  @IsEnum(Status)
+  @IsString()
   @IsNotEmpty()
-  status: boolean;
+  status: string;
 }

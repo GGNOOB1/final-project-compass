@@ -36,11 +36,11 @@ export class CreateServicesDto {
   description: string;
 
   @IsArray()
-  parts: [Parts];
+  parts: Parts[];
 
   @IsString()
   @MaxLength(20)
-  @MinLength(5)
+  @MinLength(3)
   @IsNotEmpty()
   status: string;
 }
