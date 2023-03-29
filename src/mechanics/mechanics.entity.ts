@@ -4,6 +4,7 @@ import {
   Column,
   OneToMany,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { Specialties } from './specialties.entity';
 
@@ -18,22 +19,23 @@ export class Mechanics {
   @Column()
   cpf: string;
 
-  @Column()
-  birthdate: Date;
+  @Column({ type: 'timestamp with time zone' })
+  birthday: Date;
 
   @Column()
   phone: string;
 
+  @Index({ unique: true })
   @Column()
   email: string;
 
-  @OneToMany(() => Specialties, (specialties) => specialties.specialty, {
+  @OneToMany(() => Specialties, (specialties) => specialties.mechanic, {
     eager: true,
   })
   @JoinColumn()
   specialties: Specialties[];
 
-  @Column()
+  @Column({ type: 'timestamp with time zone' })
   hiringDate: Date;
 
   @Column()
