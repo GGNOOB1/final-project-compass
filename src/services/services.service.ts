@@ -1,14 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Body, Injectable, NotFoundException, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MechanicsService } from 'src/mechanics/mechanics.service';
 import { PartsService } from 'src/parts/parts.service';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateServicesDto } from './dtos/create-services.dto';
 import { Services } from './services.entity';
 import { BadRequestException } from '@nestjs/common';
 import { ClientsService } from 'src/clients/clients.service';
 import { CarsService } from 'src/clients/cars/cars.service';
 import { PartsOrder } from './partsOrder.entity';
+import { ServicesPagination } from './dtos/services-pagination.dto';
+import { UpdateServicesDto } from './dtos/update-services.dto';
+import { Mechanics } from 'src/mechanics/mechanics.entity';
 
 @Injectable()
 export class ServicesService {
@@ -23,20 +26,22 @@ export class ServicesService {
     private carsService: CarsService,
   ) {}
 
+  async checkAllIds(clientId, mechanicId, carId): Promise<Mechanics> {
+    await this.clientsService.findById(clientId);
+    const mechanic = await this.mechanicsService.findOne(mechanicId);
+    await this.carsService.findClientCarById(clientId, carId);
+
+    return mechanic;
+  }
+
   async create({ parts, ...createServicesDto }: CreateServicesDto) {
     try {
       let totalPrice = 0;
-      let listParts = [];
-      let listOrders = [];
+      let listPartOrders = [];
 
-      const client = await this.clientsService.findById(
+      const mechanic = await this.checkAllIds(
         createServicesDto.clientId,
-      );
-      const mechanic = await this.mechanicsService.findOne(
         createServicesDto.mechanicId,
-      );
-      const car = await this.carsService.findClientCarById(
-        createServicesDto.clientId,
         createServicesDto.carId,
       );
 
@@ -56,7 +61,7 @@ export class ServicesService {
 
         if (orderPart.qtd > currentPart.qtd) {
           throw new BadRequestException(
-            `It doesn't have that amount, just ${currentPart.qtd}`,
+            `We don't have this quantity of ${currentPart.title}, just ${currentPart.qtd}`,
           );
         }
       }
@@ -78,18 +83,31 @@ export class ServicesService {
           qtd: quantityLeft,
         });
 
-        const newPartOrder = {
+        const newPartOrder = await this.partsOrderRepository.save({
           partId: currentPart.partId,
           description: currentPart.description,
           title: currentPart.title,
           qtd: orderQtd,
           unitPrice: currentPart.unitPrice,
-        };
+        });
 
-        listOrders.push(newPartOrder);
+        listPartOrders.push(newPartOrder);
       }
+      const service = await this.servicesRepository.save({
+        clientId: createServicesDto.clientId,
+        carId: createServicesDto.carId,
+        mechanicId: createServicesDto.mechanicId,
+        serviceEstimatedDeliveryDate:
+          createServicesDto.serviceEstimatedDeliveryDate,
+        description: createServicesDto.description,
+        status: createServicesDto.status,
+        partsOrder: listPartOrders,
+      });
 
-      listOrders.map((order) => {});
+      return {
+        ...service,
+        totalPrice,
+      };
     } catch (e) {
       return {
         message: e.message,
@@ -97,23 +115,44 @@ export class ServicesService {
     }
   }
 
-  async find() {
-    const services = await this.servicesRepository.find({
-      relations: ['parts'],
-    });
+  async find(servicesPagination: ServicesPagination) {
+    try {
+      const { limit, offset } = servicesPagination;
 
-    if (services.length === 0) {
-      throw new NotFoundException('There are no services in the database');
+      const services = await this.servicesRepository.find({
+        take: limit,
+        skip: offset * limit,
+        where: {
+          clientId: servicesPagination.clientId,
+          carId: servicesPagination.carId,
+          mechanicId: servicesPagination.mechanicId,
+          serviceEstimatedDeliveryDate:
+            servicesPagination.serviceEstimatedDeliveryDate,
+          description: servicesPagination.description,
+          partsOrder: servicesPagination.parts,
+          status: servicesPagination.status,
+        },
+      });
+
+      if (services.length === 0) {
+        throw new NotFoundException('There are no services in the database');
+      }
+      return {
+        limit,
+        offset,
+        total: services.length,
+        items: services,
+      };
+    } catch (e) {
+      return {
+        message: e.message,
+      };
     }
-    return {
-      items: services,
-    };
   }
 
   // Rever isso
   async findById(id: string) {
     const service = await this.servicesRepository.find({
-      relations: ['parts'],
       where: {
         id,
       },
@@ -124,8 +163,21 @@ export class ServicesService {
     }
 
     return service[0];
-    // const queryBuilder = this.servicesRepository.createQueryBuilder();
   }
 
-  async update() {}
+  async update(
+    @Param('id') id: string,
+    @Body() updateServicesDto: UpdateServicesDto,
+  ) {
+    try {
+      await this.servicesRepository.update(id, updateServicesDto);
+      const service = this.findById(id);
+
+      return service;
+    } catch (e) {
+      return {
+        message: e.message,
+      };
+    }
+  }
 }
