@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsString,
   IsUUID,
@@ -8,6 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { Parts } from 'src/parts/parts.entity';
+import { Status } from '../utils/status-enum';
 
 export class CreateServicesDto {
   @IsString()
@@ -38,9 +40,8 @@ export class CreateServicesDto {
   @IsArray()
   parts: Parts[];
 
+  @IsEnum(Status)
   @IsString()
-  @MaxLength(20)
-  @MinLength(3)
   @IsNotEmpty()
   status: string;
 }

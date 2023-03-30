@@ -37,7 +37,7 @@ export class UpdateClientsDto {
   @IsDateString()
   @IsNotEmpty()
   @IsOptional()
-  birthdate: Date;
+  birthday: Date;
 
   @IsPhoneNumber('BR')
   @IsString()
