@@ -34,13 +34,11 @@ export class Services {
   // @OneToMany(() => Parts, (parts) => parts.services, {
   //   eager: true,
   // })
-  @ManyToMany(() => Parts)
-  @JoinTable()
-  parts: Parts[];
+  @OneToMany(() => PartsOrder, (partsOrder) => partsOrder.service, {
+    eager: true,
+  })
+  partsOrder: PartsOrder[];
 
   @Column()
   status: string;
-
-  @OneToMany(() => Services, (service) => service.partsService)
-  partsService: PartsOrder[];
 }

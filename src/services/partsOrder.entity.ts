@@ -18,6 +18,6 @@ export class PartsOrder {
   @Column()
   unitPrice: string;
 
-  @ManyToOne(() => Services, (services) => services.partsService)
+  @ManyToOne(() => Services, (services) => services.partsOrder)
   service: Services;
 }

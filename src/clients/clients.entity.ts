@@ -44,6 +44,6 @@ export class Clients {
   @Column()
   city: string;
 
-  @OneToMany(() => Cars, (cars) => cars.client)
+  @OneToMany(() => Cars, (cars) => cars.client, { eager: true })
   cars: Cars[];
 }

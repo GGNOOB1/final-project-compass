@@ -29,6 +29,9 @@ export class Mechanics {
   @Column()
   email: string;
 
+  @Column()
+  password: string;
+
   @OneToMany(() => Specialties, (specialties) => specialties.mechanic, {
     eager: true,
   })
