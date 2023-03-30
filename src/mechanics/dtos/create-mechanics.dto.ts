@@ -44,6 +44,18 @@ export class CreateMechanicsDto {
   @IsNotEmpty()
   email: string;
 
+  @IsString()
+  @MaxLength(15)
+  @MinLength(5)
+  @IsNotEmpty()
+  password: string;
+
+  @IsString()
+  @MaxLength(15)
+  @MinLength(5)
+  @IsNotEmpty()
+  confirmPassword: string;
+
   @IsString({
     each: true,
   })

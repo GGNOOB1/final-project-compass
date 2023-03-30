@@ -39,7 +39,7 @@ export class UpdateClientsDto {
   @IsOptional()
   birthdate: Date;
 
-  @IsPhoneNumber()
+  @IsPhoneNumber('BR')
   @IsString()
   @IsNotEmpty()
   @IsOptional()
@@ -50,13 +50,6 @@ export class UpdateClientsDto {
   @IsNotEmpty()
   @IsOptional()
   email: string;
-
-  @IsString()
-  @MaxLength(15)
-  @MinLength(5)
-  @IsNotEmpty()
-  @IsOptional()
-  password: string;
 
   @IsString()
   @IsPostalCode()

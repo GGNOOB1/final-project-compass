@@ -4,7 +4,6 @@ import {
   MaxLength,
   MinLength,
   Validate,
-  IsDateString,
   IsPhoneNumber,
   IsEmail,
   IsPostalCode,
@@ -51,6 +50,12 @@ export class CreateClientsDto {
   @MinLength(5)
   @IsNotEmpty()
   password: string;
+
+  @IsString()
+  @MaxLength(15)
+  @MinLength(5)
+  @IsNotEmpty()
+  confirmPassword: string;
 
   @IsString()
   @IsPostalCode('BR')
