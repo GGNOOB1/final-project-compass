@@ -5,7 +5,7 @@ import { Mechanics } from './mechanics.entity';
 
 @Entity()
 export class Specialties {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
