@@ -1,19 +1,45 @@
-import { Controller, Get, Post, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  Query,
+} from '@nestjs/common';
+import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
 import { ClientsService } from './clients.service';
+import { ClientPagination } from './dtos/client-pagination.dto';
+import { CreateClientsDto } from './dtos/create-clients.dto';
+import { UpdateClientsDto } from './dtos/update-clients.dto';
 
 @Controller('api/v1/clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
   @Get()
-  listClients() {}
+  async listClients(@Query() clientPagination: ClientPagination) {
+    const clients = await this.clientsService.find(clientPagination);
+    return removeFieldsInObjects(clients, ['password']);
+  }
 
   @Post()
-  createClients() {}
+  createClients(@Body() createClientsDto: CreateClientsDto) {
+    return this.clientsService.create(createClientsDto);
+  }
 
   @Patch('/:id')
-  updateClients() {}
+  async updateClients(
+    @Param('id') id: string,
+    @Body() updateClientsDto: UpdateClientsDto,
+  ) {
+    const client = await this.clientsService.update(id, updateClientsDto);
+    return removeFieldsInObjects(client, ['password']);
+  }
 
   @Get('/:id')
-  getClientsById() {}
+  async getClientsById(@Param('id') id: string) {
+    const client = await this.clientsService.findById(id);
+    return removeFieldsInObjects(client, ['password']);
+  }
 }
