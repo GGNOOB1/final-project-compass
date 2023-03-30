@@ -14,6 +14,7 @@ import { Mechanics } from './mechanics/mechanics.entity';
 import { Parts } from './parts/parts.entity';
 import { Services } from './services/services.entity';
 import { Specialties } from './mechanics/specialties.entity';
+import { PartsOrder } from './services/partsOrder.entity';
 
 @Module({
   imports: [
@@ -26,7 +27,15 @@ import { Specialties } from './mechanics/specialties.entity';
       password: process.env.DB_PASSWORD,
       port: Number(process.env.DB_PORT),
       synchronize: true,
-      entities: [Clients, Cars, Mechanics, Parts, Services, Specialties],
+      entities: [
+        Clients,
+        Cars,
+        Mechanics,
+        Parts,
+        Services,
+        Specialties,
+        PartsOrder,
+      ],
     }),
     ClientsModule,
     MechanicsModule,
