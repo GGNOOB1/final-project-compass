@@ -8,7 +8,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { PartsOrder } from './partsOrder';
+import { PartsOrder } from './partsOrder.entity';
 
 @Entity()
 export class Services {

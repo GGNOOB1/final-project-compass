@@ -9,7 +9,7 @@ import { MechanicsService } from 'src/mechanics/mechanics.service';
 import { Specialties } from 'src/mechanics/specialties.entity';
 import { Parts } from 'src/parts/parts.entity';
 import { PartsService } from 'src/parts/parts.service';
-import { PartsOrder } from './partsOrder';
+import { PartsOrder } from './partsOrder.entity';
 import { ServicesController } from './services.controller';
 import { Services } from './services.entity';
 import { ServicesService } from './services.service';

@@ -8,7 +8,7 @@ import { Services } from './services.entity';
 import { BadRequestException } from '@nestjs/common';
 import { ClientsService } from 'src/clients/clients.service';
 import { CarsService } from 'src/clients/cars/cars.service';
-import { PartsOrder } from './partsOrder';
+import { PartsOrder } from './partsOrder.entity';
 
 @Injectable()
 export class ServicesService {
@@ -89,9 +89,7 @@ export class ServicesService {
         listOrders.push(newPartOrder);
       }
 
-      listOrders.map((order) => {
-        console.log(order);
-      });
+      listOrders.map((order) => {});
     } catch (e) {
       return {
         message: e.message,
