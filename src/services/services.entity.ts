@@ -8,6 +8,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
+import { PartsOrder } from './partsOrder';
 
 @Entity()
 export class Services {
@@ -39,4 +40,7 @@ export class Services {
 
   @Column()
   status: string;
+
+  @OneToMany(() => Services, (service) => service.partsService)
+  partsService: PartsOrder[];
 }
