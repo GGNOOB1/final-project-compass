@@ -35,21 +35,15 @@ export class AuthClientService {
   }
 
   async signIn(loginClient: LoginUpdatePasswordDto) {
-    try {
-      const user = await verifyPasswordAndEmail(
-        this.clientsService,
-        comparePasswords,
-        loginClient,
-      );
-      const payload = { username: user['name'], sub: user['id'] };
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
-    }
+    const user = await verifyPasswordAndEmail(
+      this.clientsService,
+      comparePasswords,
+      loginClient,
+    );
+    const payload = { username: user['name'], sub: user['id'] };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async updatePassword(loginClient: LoginUpdatePasswordDto) {

@@ -14,7 +14,6 @@ import { UpdateServicesDto } from './dtos/update-services.dto';
 import { Mechanics } from 'src/mechanics/mechanics.entity';
 import { formatDate } from 'src/utils/formatDate';
 import { calculatePrice } from './utils/calculatePrice';
-import { query } from 'express';
 
 @Injectable()
 export class ServicesService {
@@ -38,115 +37,103 @@ export class ServicesService {
   }
 
   async create({ parts, ...createServicesDto }: CreateServicesDto) {
-    try {
-      let totalPrice = 0;
-      let listPartOrders = [];
+    let totalPrice = 0;
+    let listPartOrders = [];
 
-      createServicesDto.serviceEstimatedDeliveryDate = formatDate(
-        createServicesDto.serviceEstimatedDeliveryDate,
-      );
+    createServicesDto.serviceEstimatedDeliveryDate = formatDate(
+      createServicesDto.serviceEstimatedDeliveryDate,
+    );
 
-      const mechanic = await this.checkAllIds(
-        createServicesDto.clientId,
-        createServicesDto.mechanicId,
-        createServicesDto.carId,
-      );
+    const mechanic = await this.checkAllIds(
+      createServicesDto.clientId,
+      createServicesDto.mechanicId,
+      createServicesDto.carId,
+    );
 
-      for (let orderPart of parts) {
-        const currentPart = await this.partsService.findById(orderPart.partId);
-        if (!currentPart) {
-          throw new NotFoundException(
-            `This part id: ${orderPart.partId} does not exist`,
-          );
-        }
-
-        if (currentPart.qtd === 0) {
-          throw new BadRequestException(
-            `The product: ${currentPart.title} sold out`,
-          );
-        }
-
-        if (orderPart.qtd > currentPart.qtd) {
-          throw new BadRequestException(
-            `We don't have this quantity of ${currentPart.title}, just ${currentPart.qtd}`,
-          );
-        }
-      }
-
-      for (let orderPart of parts) {
-        const currentPart = await this.partsService.findById(orderPart.partId);
-
-        const { totalPriceRight, quantityLeft, orderQtd } = calculatePrice(
-          orderPart,
-          currentPart,
-          mechanic.serviceFee,
+    for (let orderPart of parts) {
+      const currentPart = await this.partsService.findById(orderPart.partId);
+      if (!currentPart) {
+        throw new NotFoundException(
+          `This part id: ${orderPart.partId} does not exist`,
         );
-
-        totalPrice += totalPriceRight;
-
-        await this.partsService.update(currentPart.partId, {
-          qtd: quantityLeft,
-        });
-
-        const newPartOrder = await this.partsOrderRepository.save({
-          description: currentPart.description,
-          title: currentPart.title,
-          qtd: orderQtd,
-          unitPrice: currentPart.unitPrice,
-        });
-
-        listPartOrders.push(newPartOrder);
       }
-      const service = await this.servicesRepository.create({
-        clientId: createServicesDto.clientId,
-        carId: createServicesDto.carId,
-        mechanicId: createServicesDto.mechanicId,
-        serviceEstimatedDeliveryDate:
-          createServicesDto.serviceEstimatedDeliveryDate,
-        description: createServicesDto.description,
-        status: createServicesDto.status,
-        partsOrder: listPartOrders,
+
+      if (currentPart.qtd === 0) {
+        throw new BadRequestException(
+          `The product: ${currentPart.title} sold out`,
+        );
+      }
+
+      if (orderPart.qtd > currentPart.qtd) {
+        throw new BadRequestException(
+          `We don't have this quantity of ${currentPart.title}, just ${currentPart.qtd}`,
+        );
+      }
+    }
+
+    for (let orderPart of parts) {
+      const currentPart = await this.partsService.findById(orderPart.partId);
+
+      const { totalPriceRight, quantityLeft, orderQtd } = calculatePrice(
+        orderPart,
+        currentPart,
+        mechanic.serviceFee,
+      );
+
+      totalPrice += totalPriceRight;
+
+      await this.partsService.update(currentPart.partId, {
+        qtd: quantityLeft,
       });
 
-      await this.servicesRepository.save(service);
+      const newPartOrder = await this.partsOrderRepository.save({
+        description: currentPart.description,
+        title: currentPart.title,
+        qtd: orderQtd,
+        unitPrice: currentPart.unitPrice,
+      });
 
-      return {
-        ...service,
-        totalPrice,
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+      listPartOrders.push(newPartOrder);
     }
+    const service = await this.servicesRepository.create({
+      clientId: createServicesDto.clientId,
+      carId: createServicesDto.carId,
+      mechanicId: createServicesDto.mechanicId,
+      serviceEstimatedDeliveryDate:
+        createServicesDto.serviceEstimatedDeliveryDate,
+      description: createServicesDto.description,
+      status: createServicesDto.status,
+      partsOrder: listPartOrders,
+    });
+
+    await this.servicesRepository.save(service);
+
+    return {
+      ...service,
+      totalPrice,
+    };
   }
 
   async find(servicesPagination: ServicesPagination) {
-    try {
-      const { limit, offset, ...query } = servicesPagination;
+    const { limit, offset, ...query } = servicesPagination;
 
-      const services = await this.servicesRepository.find({
-        take: limit,
-        skip: offset * limit,
-        where: {
-          ...query,
-        },
-      });
+    const services = await this.servicesRepository.find({
+      take: limit,
+      skip: offset * limit,
+      where: {
+        ...query,
+      },
+    });
 
-      if (services.length === 0) {
-        throw new NotFoundException('There are no services in the database');
-      }
-      return {
-        limit,
-        offset,
-        total: services.length,
-        items: services,
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (services.length === 0) {
+      throw new NotFoundException('There are no services in the database');
     }
+    return {
+      limit,
+      offset,
+      total: services.length,
+      items: services,
+    };
   }
 
   async findById(id: string) {
@@ -182,26 +169,20 @@ export class ServicesService {
     @Param('id') id: string,
     @Body() updateServicesDto: UpdateServicesDto,
   ) {
-    try {
-      updateServicesDto.serviceEstimatedDeliveryDate = formatDate(
-        updateServicesDto.serviceEstimatedDeliveryDate,
-      );
+    updateServicesDto.serviceEstimatedDeliveryDate = formatDate(
+      updateServicesDto.serviceEstimatedDeliveryDate,
+    );
 
-      await this.clientsService.findById(updateServicesDto.clientId);
-      await this.carsService.findClientCarById(
-        updateServicesDto.clientId,
-        updateServicesDto.carId,
-      );
-      await this.mechanicsService.findOne(updateServicesDto.mechanicId);
+    await this.clientsService.findById(updateServicesDto.clientId);
+    await this.carsService.findClientCarById(
+      updateServicesDto.clientId,
+      updateServicesDto.carId,
+    );
+    await this.mechanicsService.findOne(updateServicesDto.mechanicId);
 
-      await this.servicesRepository.update(id, updateServicesDto);
-      const service = this.servicesRepository.findOneBy({ id });
+    await this.servicesRepository.update(id, updateServicesDto);
+    const service = this.servicesRepository.findOneBy({ id });
 
-      return service;
-    } catch (e) {
-      return {
-        message: e.message,
-      };
-    }
+    return service;
   }
 }

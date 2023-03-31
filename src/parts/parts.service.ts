@@ -22,36 +22,35 @@ export class PartsService {
   }
 
   async find(partsPagination: PartsPagination) {
-    try {
-      const { limit, offset, ...query } = partsPagination;
+    const { limit, offset, ...query } = partsPagination;
 
-      const parts = await this.partsRepository.find({
-        take: limit,
-        skip: offset * limit,
-        where: {
-          ...query,
-        },
-      });
+    const parts = await this.partsRepository.find({
+      take: limit,
+      skip: offset * limit,
+      where: {
+        ...query,
+      },
+    });
 
-      if (parts.length === 0) {
-        throw new NotFoundException('There are no parts in the database');
-      }
-
-      return {
-        limit,
-        offset,
-        total: parts.length,
-        items: parts,
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (parts.length === 0) {
+      throw new NotFoundException('There are no parts in the database');
     }
+
+    return {
+      limit,
+      offset,
+      total: parts.length,
+      items: parts,
+    };
   }
 
   async findById(partId: string) {
     const part = await this.partsRepository.findOneBy({ partId });
+
+    if (!part) {
+      throw new NotFoundException('This part id not found');
+    }
+
     return part;
   }
 
@@ -60,25 +59,19 @@ export class PartsService {
   }
 
   async updateById(id: string, updatePartsDto: UpdatePartsDto) {
-    try {
-      if (Object.keys(updatePartsDto).length === 0) {
-        throw new BadRequestException('No field has been entered');
-      }
-
-      const part = await this.findById(id);
-      if (!part) {
-        throw new NotFoundException('The part id does not exist');
-      }
-
-      await this.partsRepository.update({ partId: id }, updatePartsDto);
-
-      const updatedPart = await this.findById(id);
-
-      return updatedPart;
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (Object.keys(updatePartsDto).length === 0) {
+      throw new BadRequestException('No field has been entered');
     }
+
+    const part = await this.findById(id);
+    if (!part) {
+      throw new NotFoundException('The part id does not exist');
+    }
+
+    await this.partsRepository.update({ partId: id }, updatePartsDto);
+
+    const updatedPart = await this.findById(id);
+
+    return updatedPart;
   }
 }

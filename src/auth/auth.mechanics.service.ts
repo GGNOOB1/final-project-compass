@@ -20,30 +20,24 @@ export class AuthMechanicsService {
   ) {}
 
   async signIn(loginMechanic: LoginUpdatePasswordDto) {
-    try {
-      const user = await verifyPasswordAndEmail(
-        this.mechanicsService,
-        comparePasswords,
-        loginMechanic,
-      );
+    const user = await verifyPasswordAndEmail(
+      this.mechanicsService,
+      comparePasswords,
+      loginMechanic,
+    );
 
-      if (!user) {
-        throw new NotFoundException('This email does not exist');
-      }
-      const hashedPassword = user['password'];
-
-      if (!(await comparePasswords(loginMechanic.password, hashedPassword))) {
-        throw new BadRequestException('Your password is wrong!');
-      }
-      const payload = { username: user['name'], sub: user['id'] };
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (!user) {
+      throw new NotFoundException('This email does not exist');
     }
+    const hashedPassword = user['password'];
+
+    if (!(await comparePasswords(loginMechanic.password, hashedPassword))) {
+      throw new BadRequestException('Your password is wrong!');
+    }
+    const payload = { username: user['name'], sub: user['id'] };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async updatePassword(loginMechanic: LoginUpdatePasswordDto) {

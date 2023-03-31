@@ -26,90 +26,78 @@ export class MechanicsService {
   ) {}
 
   async create(createMechanicsDto: CreateMechanicsDto) {
-    try {
-      createMechanicsDto.birthday = formatDate(createMechanicsDto.birthday);
+    createMechanicsDto.birthday = formatDate(createMechanicsDto.birthday);
 
-      createMechanicsDto.hiringDate = formatDate(createMechanicsDto.hiringDate);
+    createMechanicsDto.hiringDate = formatDate(createMechanicsDto.hiringDate);
 
-      const specialties = createMechanicsDto.specialties;
+    const specialties = createMechanicsDto.specialties;
 
-      delete createMechanicsDto.specialties;
-      verifyPassword(
-        createMechanicsDto.password,
-        createMechanicsDto.confirmPassword,
-      );
+    delete createMechanicsDto.specialties;
+    verifyPassword(
+      createMechanicsDto.password,
+      createMechanicsDto.confirmPassword,
+    );
 
-      createMechanicsDto.password = await encryptPassword(
-        createMechanicsDto.password,
-      );
-      const mechanic = this.mechanicsRepository.create({
-        name: createMechanicsDto.name,
-        cpf: createMechanicsDto.cpf,
-        birthday: createMechanicsDto.birthday,
-        phone: createMechanicsDto.phone,
-        email: createMechanicsDto.email,
-        password: createMechanicsDto.password,
-        hiringDate: createMechanicsDto.hiringDate,
-        serviceFee: createMechanicsDto.serviceFee,
-        status: createMechanicsDto.status,
+    createMechanicsDto.password = await encryptPassword(
+      createMechanicsDto.password,
+    );
+    const mechanic = this.mechanicsRepository.create({
+      name: createMechanicsDto.name,
+      cpf: createMechanicsDto.cpf,
+      birthday: createMechanicsDto.birthday,
+      phone: createMechanicsDto.phone,
+      email: createMechanicsDto.email,
+      password: createMechanicsDto.password,
+      hiringDate: createMechanicsDto.hiringDate,
+      serviceFee: createMechanicsDto.serviceFee,
+      status: createMechanicsDto.status,
+    });
+
+    const newMechanic = await this.mechanicsRepository.save(mechanic);
+
+    for (let specialty of specialties) {
+      const newSpecialty = await this.specialtiesRepository.create({
+        name: specialty,
+        mechanic: newMechanic,
       });
-
-      const newMechanic = await this.mechanicsRepository.save(mechanic);
-
-      for (let specialty of specialties) {
-        const newSpecialty = await this.specialtiesRepository.create({
-          name: specialty,
-          mechanic: newMechanic,
-        });
-        await this.specialtiesRepository.save(newSpecialty);
-      }
-
-      const newSpecialties = await this.specialtiesRepository.find({
-        where: {
-          mechanic: newMechanic,
-        },
-      });
-      await removeFieldsInObjects(newMechanic, ['password']);
-      return {
-        ...newMechanic,
-        specialties: newSpecialties,
-      };
-    } catch (e) {
-      return {
-        error: e.message,
-      };
+      await this.specialtiesRepository.save(newSpecialty);
     }
+
+    const newSpecialties = await this.specialtiesRepository.find({
+      where: {
+        mechanic: newMechanic,
+      },
+    });
+    await removeFieldsInObjects(newMechanic, ['password']);
+    return {
+      ...newMechanic,
+      specialties: newSpecialties,
+    };
   }
 
   async find(mechanicPagination: MechanicPagination) {
-    try {
-      const { limit, offset, specialties, ...query } = mechanicPagination;
+    const { limit, offset, specialties, ...query } = mechanicPagination;
 
-      const mechanics = await this.mechanicsRepository.find({
-        take: limit,
-        skip: offset * limit,
-        where: {
-          ...query,
-        },
-      });
+    const mechanics = await this.mechanicsRepository.find({
+      take: limit,
+      skip: offset * limit,
+      where: {
+        ...query,
+      },
+    });
 
-      if (mechanics.length === 0) {
-        throw new NotFoundException('There are no mechanics in the database');
-      }
-
-      removePasswordInArrays(mechanics);
-
-      return {
-        limit,
-        offset,
-        total: mechanics.length,
-        items: mechanics,
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (mechanics.length === 0) {
+      throw new NotFoundException('There are no mechanics in the database');
     }
+
+    removePasswordInArrays(mechanics);
+
+    return {
+      limit,
+      offset,
+      total: mechanics.length,
+      items: mechanics,
+    };
   }
 
   async findById(id: string) {
@@ -133,68 +121,56 @@ export class MechanicsService {
       throw new BadRequestException('No data has been entered');
     }
 
-    try {
-      const { specialties, ...updateMechanic } = updatedMechanicDto;
+    const { specialties, ...updateMechanic } = updatedMechanicDto;
 
-      const mechanic = await this.mechanicsRepository.findOneBy({ id });
-      if (!mechanic) {
-        throw new NotFoundException('Mechanic id not found');
-      }
-
-      if (updateMechanic.birthday || updateMechanic.hiringDate) {
-        updateMechanic.birthday = formatDate(updateMechanic.birthday);
-        updateMechanic.hiringDate = formatDate(updateMechanic.hiringDate);
-      }
-
-      if (specialties) {
-        const currentSpecialties = await this.specialtiesRepository.find({
-          where: {
-            mechanic,
-          },
-        });
-
-        if (currentSpecialties.length > 0) {
-          for (let oldSpecialty of currentSpecialties) {
-            await this.specialtiesRepository.delete(oldSpecialty.id);
-          }
-        }
-
-        for (let specialty of specialties) {
-          const newSpecialty = await this.specialtiesRepository.create({
-            name: specialty,
-            mechanic,
-          });
-          await this.specialtiesRepository.save(newSpecialty);
-        }
-      }
-
-      if (Object.keys(updateMechanic).length !== 0) {
-        await this.mechanicsRepository.update(id, updateMechanic);
-      }
-
-      const updatedMechanic = await this.findById(mechanic.id);
-      return updatedMechanic;
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    const mechanic = await this.mechanicsRepository.findOneBy({ id });
+    if (!mechanic) {
+      throw new NotFoundException('Mechanic id not found');
     }
+
+    if (updateMechanic.birthday || updateMechanic.hiringDate) {
+      updateMechanic.birthday = formatDate(updateMechanic.birthday);
+      updateMechanic.hiringDate = formatDate(updateMechanic.hiringDate);
+    }
+
+    if (specialties) {
+      const currentSpecialties = await this.specialtiesRepository.find({
+        where: {
+          mechanic,
+        },
+      });
+
+      if (currentSpecialties.length > 0) {
+        for (let oldSpecialty of currentSpecialties) {
+          await this.specialtiesRepository.delete(oldSpecialty.id);
+        }
+      }
+
+      for (let specialty of specialties) {
+        const newSpecialty = await this.specialtiesRepository.create({
+          name: specialty,
+          mechanic,
+        });
+        await this.specialtiesRepository.save(newSpecialty);
+      }
+    }
+
+    if (Object.keys(updateMechanic).length !== 0) {
+      await this.mechanicsRepository.update(id, updateMechanic);
+    }
+
+    const updatedMechanic = await this.findById(mechanic.id);
+    return updatedMechanic;
   }
 
   async findOneByEmail(email: string) {
-    try {
-      const client = await this.mechanicsRepository.findOneBy({ email });
+    const client = await this.mechanicsRepository.findOneBy({ email });
 
-      if (!client) {
-        return null;
-      }
-
-      return client;
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (!client) {
+      return null;
     }
+
+    return client;
   }
 
   async updatePassword(id: string, password: string) {

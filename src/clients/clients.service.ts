@@ -18,25 +18,16 @@ export class ClientsService {
   ) {}
 
   async create(createClientsDto: CreateClientsDto) {
-    try {
-      createClientsDto.birthday = formatDate(createClientsDto.birthday);
+    createClientsDto.birthday = formatDate(createClientsDto.birthday);
 
-      verifyPassword(
-        createClientsDto.password,
-        createClientsDto.confirmPassword,
-      );
+    verifyPassword(createClientsDto.password, createClientsDto.confirmPassword);
 
-      createClientsDto.password = await encryptPassword(
-        createClientsDto.password,
-      );
+    createClientsDto.password = await encryptPassword(
+      createClientsDto.password,
+    );
 
-      const client = await this.clientsRepository.save(createClientsDto);
-      return removeFieldsInObjects(client, ['password', 'confirmPassword']);
-    } catch (e) {
-      return {
-        error: e.message,
-      };
-    }
+    const client = await this.clientsRepository.save(createClientsDto);
+    return removeFieldsInObjects(client, ['password', 'confirmPassword']);
   }
 
   async find(clientPagination: ClientPagination) {
@@ -73,62 +64,44 @@ export class ClientsService {
   }
 
   async findById(id: string) {
-    try {
-      const client = await this.clientsRepository.findOne({
-        where: {
-          id,
-        },
-      });
+    const client = await this.clientsRepository.findOne({
+      where: {
+        id,
+      },
+    });
 
-      if (!client) {
-        throw new NotFoundException('This id does not exist');
-      }
-
-      return client;
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (!client) {
+      throw new NotFoundException('This id does not exist');
     }
+
+    return client;
   }
 
   async findOneByEmail(email: string) {
-    try {
-      const client = await this.clientsRepository.findOneBy({ email });
+    const client = await this.clientsRepository.findOneBy({ email });
 
-      if (!client) {
-        return null;
-      }
-
-      return client;
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (!client) {
+      return null;
     }
+
+    return client;
   }
 
   async update(id: string, updateClientsDto: UpdateClientsDto) {
-    try {
-      if (updateClientsDto.birthday) {
-        updateClientsDto.birthday = formatDate(updateClientsDto.birthday);
-      }
-
-      const client = await this.findById(id);
-
-      if (!client) {
-        throw new NotFoundException('This id dont exist');
-      }
-
-      await this.clientsRepository.update(id, updateClientsDto);
-
-      const updatedClient = await this.findById(id);
-      return updatedClient;
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (updateClientsDto.birthday) {
+      updateClientsDto.birthday = formatDate(updateClientsDto.birthday);
     }
+
+    const client = await this.findById(id);
+
+    if (!client) {
+      throw new NotFoundException('This id dont exist');
+    }
+
+    await this.clientsRepository.update(id, updateClientsDto);
+
+    const updatedClient = await this.findById(id);
+    return updatedClient;
   }
 
   async updatePassword(id: string, password: string) {

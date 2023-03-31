@@ -8,13 +8,17 @@ export class AuthClientsController {
   constructor(private authClientService: AuthClientService) {}
 
   @Post('/login')
-  login(@Body() loginClient: LoginUpdatePasswordDto) {
-    return this.authClientService.signIn(loginClient);
+  async login(@Body() loginClient: LoginUpdatePasswordDto) {
+    try {
+      return this.authClientService.signIn(loginClient);
+    } catch (error) {}
   }
 
   @Post('/updatePassword')
-  updatePasswordClient(@Body() loginClient: LoginUpdatePasswordDto) {
-    return this.authClientService.updatePassword(loginClient);
+  async updatePasswordClient(@Body() loginClient: LoginUpdatePasswordDto) {
+    try {
+      return this.authClientService.updatePassword(loginClient);
+    } catch (error) {}
   }
 
   @Post('/refreshToken')

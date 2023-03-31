@@ -15,66 +15,54 @@ export class CarsService {
   ) {}
 
   async create(createCarDto: CreateCarDto, id: string) {
-    try {
-      const client = await this.clientsService.findOne(id);
+    const client = await this.clientsService.findOne(id);
 
-      if (!client) {
-        throw new NotFoundException('The client id was not found');
-      }
-
-      const car = await this.carsRepository.create({
-        license_plate: createCarDto.license_plate,
-        model: createCarDto.model,
-        year: createCarDto.year,
-        manufacturer: createCarDto.manufacturer,
-        color: createCarDto.color,
-        client,
-      });
-      await this.carsRepository.save(car);
-
-      return {
-        license_plate: car.license_plate,
-        model: car.model,
-        year: car.year,
-        manufacturer: car.manufacturer,
-        color: car.color,
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (!client) {
+      throw new NotFoundException('The client id was not found');
     }
+
+    const car = await this.carsRepository.create({
+      license_plate: createCarDto.license_plate,
+      model: createCarDto.model,
+      year: createCarDto.year,
+      manufacturer: createCarDto.manufacturer,
+      color: createCarDto.color,
+      client,
+    });
+    await this.carsRepository.save(car);
+
+    return {
+      license_plate: car.license_plate,
+      model: car.model,
+      year: car.year,
+      manufacturer: car.manufacturer,
+      color: car.color,
+    };
   }
 
   async find(id: string, carPagination: CarPagination) {
-    try {
-      const { limit, offset, ...query } = carPagination;
+    const { limit, offset, ...query } = carPagination;
 
-      const client = await this.clientsService.findOne(id);
+    const client = await this.clientsService.findOne(id);
 
-      if (!client) {
-        throw new NotFoundException('The client id was not found');
-      }
-
-      const cars = await this.carsRepository.find({
-        take: limit,
-        skip: offset * limit,
-        where: {
-          ...query,
-        },
-      });
-
-      return {
-        limit,
-        offset,
-        total: cars.length,
-        items: cars,
-      };
-    } catch (e) {
-      return {
-        message: e.message,
-      };
+    if (!client) {
+      throw new NotFoundException('The client id was not found');
     }
+
+    const cars = await this.carsRepository.find({
+      take: limit,
+      skip: offset * limit,
+      where: {
+        ...query,
+      },
+    });
+
+    return {
+      limit,
+      offset,
+      total: cars.length,
+      items: cars,
+    };
   }
 
   async findById(carId: string) {

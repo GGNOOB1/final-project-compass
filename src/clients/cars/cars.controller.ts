@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -12,37 +13,70 @@ import { CarsService } from './cars.service';
 import { CarPagination } from './dtos/car-pagination.dto';
 import { CreateCarDto } from './dtos/create-car.dto';
 import { UpdateCarDto } from './dtos/update-car.dto';
+import { formatErrors } from 'src/utils/formatErrors';
 
 @Controller('api/v1/clients/:id/cars')
 export class CarsController {
   constructor(private carsService: CarsService) {}
 
   @Get()
-  listCars(@Param('id') id: string, @Query() carPagination: CarPagination) {
-    return this.carsService.find(id, carPagination);
+  async listCars(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Query() carPagination: CarPagination,
+  ) {
+    try {
+      return this.carsService.find(id, carPagination);
+    } catch (error) {
+      return formatErrors(error);
+    }
   }
 
   @Post()
-  addClientCar(@Body() createCarDto: CreateCarDto, @Param('id') id: string) {
-    return this.carsService.create(createCarDto, id);
+  async addClientCar(
+    @Body() createCarDto: CreateCarDto,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ) {
+    try {
+      return this.carsService.create(createCarDto, id);
+    } catch (error) {
+      return formatErrors(error);
+    }
   }
 
   @Patch('/:carId')
-  updateClientCar(
-    @Param('id') id: string,
-    @Param('carId') carId: string,
+  async updateClientCar(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('carId', new ParseUUIDPipe()) carId: string,
     @Body() updatedCarDto: UpdateCarDto,
   ) {
-    return this.carsService.update(id, carId, updatedCarDto);
+    try {
+      return this.carsService.update(id, carId, updatedCarDto);
+    } catch (error) {
+      return formatErrors(error);
+    }
   }
 
   @Delete('/:carId')
-  removeClientCar(@Param('id') id: string, @Param('carId') carId: string) {
-    return this.carsService.delete(id, carId);
+  async removeClientCar(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('carId', new ParseUUIDPipe()) carId: string,
+  ) {
+    try {
+      return this.carsService.delete(id, carId);
+    } catch (error) {
+      return formatErrors(error);
+    }
   }
 
   @Get('/:carId')
-  getClientCarById(@Param('id') id: string, @Param('carId') carId: string) {
-    return this.carsService.findClientCarById(id, carId);
+  async getClientCarById(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('carId', new ParseUUIDPipe()) carId: string,
+  ) {
+    try {
+      return this.carsService.findClientCarById(id, carId);
+    } catch (error) {
+      return formatErrors(error);
+    }
   }
 }
