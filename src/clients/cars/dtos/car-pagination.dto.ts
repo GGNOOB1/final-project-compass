@@ -1,4 +1,4 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/mapped-types';
 import { IsOptional } from 'class-validator';
 import { UpdateCarDto } from './update-car.dto';
 
