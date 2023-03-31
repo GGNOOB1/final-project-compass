@@ -143,7 +143,6 @@ export class ServicesService {
       });
     });
 
-    console.log(services);
     return {
       limit,
       offset,
