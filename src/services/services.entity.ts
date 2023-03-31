@@ -24,16 +24,12 @@ export class Services {
   @Column()
   mechanicId: string;
 
-  @Column()
+  @Column({ type: 'date' })
   serviceEstimatedDeliveryDate: Date;
 
   @Column()
   description: string;
 
-  // Relationship one to many
-  // @OneToMany(() => Parts, (parts) => parts.services, {
-  //   eager: true,
-  // })
   @OneToMany(() => PartsOrder, (partsOrder) => partsOrder.service, {
     eager: true,
   })
