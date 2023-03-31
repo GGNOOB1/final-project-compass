@@ -16,10 +16,11 @@ export class Mechanics {
   @Column()
   name: string;
 
+  @Index({ unique: true })
   @Column()
   cpf: string;
 
-  @Column({ type: 'timestamp with time zone' })
+  @Column({ type: 'date' })
   birthday: Date;
 
   @Column()
@@ -38,7 +39,7 @@ export class Mechanics {
   @JoinColumn()
   specialties: Specialties[];
 
-  @Column({ type: 'timestamp with time zone' })
+  @Column({ type: 'date' })
   hiringDate: Date;
 
   @Column()

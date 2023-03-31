@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMechanicsDto } from './dtos/create-mechanics.dto';
@@ -9,6 +13,9 @@ import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
 import { removePasswordInArrays } from 'src/utils/removePasswordInArrays';
 import { UpdateMechanicsDto } from './dtos/update-mechanics.dto';
 import { MechanicPagination } from './dtos/mechanic-pagination.dto';
+import { verifyPassword } from 'src/utils/verifyPasswords';
+import { encryptPassword } from 'src/utils/encryptPassword';
+import { formatDate } from 'src/utils/formatDate';
 @Injectable()
 export class MechanicsService {
   constructor(
@@ -20,22 +27,21 @@ export class MechanicsService {
 
   async create(createMechanicsDto: CreateMechanicsDto) {
     try {
-      // const promisesSpecialties = [];
+      createMechanicsDto.birthday = formatDate(createMechanicsDto.birthday);
 
-      createMechanicsDto.birthday = moment(
-        createMechanicsDto.birthday,
-        'DD/MM/YYYY',
-      ).toISOString();
-
-      createMechanicsDto.hiringDate = moment(
-        createMechanicsDto.hiringDate,
-        'DD/MM/YYYY',
-      ).toISOString();
+      createMechanicsDto.hiringDate = formatDate(createMechanicsDto.hiringDate);
 
       const specialties = createMechanicsDto.specialties;
 
       delete createMechanicsDto.specialties;
+      verifyPassword(
+        createMechanicsDto.password,
+        createMechanicsDto.confirmPassword,
+      );
 
+      createMechanicsDto.password = await encryptPassword(
+        createMechanicsDto.password,
+      );
       const mechanic = this.mechanicsRepository.create({
         name: createMechanicsDto.name,
         cpf: createMechanicsDto.cpf,
@@ -77,20 +83,13 @@ export class MechanicsService {
 
   async find(mechanicPagination: MechanicPagination) {
     try {
-      const { limit, offset } = mechanicPagination;
+      const { limit, offset, specialties, ...query } = mechanicPagination;
 
       const mechanics = await this.mechanicsRepository.find({
         take: limit,
         skip: offset * limit,
         where: {
-          name: mechanicPagination.name,
-          cpf: mechanicPagination.cpf,
-          // birthday: mechanicPagination.birthday,
-          phone: mechanicPagination.phone,
-          email: mechanicPagination.email,
-          // hiringDate: mechanicPagination.hiringDate,
-          serviceFee: mechanicPagination.serviceFee,
-          status: mechanicPagination.status,
+          ...query,
         },
       });
 
@@ -129,35 +128,35 @@ export class MechanicsService {
     return mechanic;
   }
 
-  async update(
-    id: string,
-    { specialties, ...updateMechanicDto }: UpdateMechanicsDto, // updateMechanicDto: UpdateMechanicsDto,
-  ) {
+  async update(id: string, updatedMechanicDto: UpdateMechanicsDto) {
+    if (Object.keys(updatedMechanicDto).length === 0) {
+      throw new BadRequestException('No data has been entered');
+    }
+
     try {
+      const { specialties, ...updateMechanic } = updatedMechanicDto;
+
       const mechanic = await this.mechanicsRepository.findOneBy({ id });
       if (!mechanic) {
         throw new NotFoundException('Mechanic id not found');
       }
 
+      if (updateMechanic.birthday || updateMechanic.hiringDate) {
+        updateMechanic.birthday = formatDate(updateMechanic.birthday);
+        updateMechanic.hiringDate = formatDate(updateMechanic.hiringDate);
+      }
+
       if (specialties) {
-        updateMechanicDto.birthday = moment(
-          updateMechanicDto.birthday,
-          'DD/MM/YYYY',
-        ).toISOString();
-
-        updateMechanicDto.hiringDate = moment(
-          updateMechanicDto.hiringDate,
-          'DD/MM/YYYY',
-        ).toISOString();
-
         const currentSpecialties = await this.specialtiesRepository.find({
           where: {
             mechanic,
           },
         });
 
-        for (let cspecialty of currentSpecialties) {
-          await this.specialtiesRepository.delete(cspecialty.id);
+        if (currentSpecialties.length > 0) {
+          for (let oldSpecialty of currentSpecialties) {
+            await this.specialtiesRepository.delete(oldSpecialty.id);
+          }
         }
 
         for (let specialty of specialties) {
@@ -169,16 +168,38 @@ export class MechanicsService {
         }
       }
 
-      await this.mechanicsRepository.update(id, updateMechanicDto);
+      if (Object.keys(updateMechanic).length !== 0) {
+        await this.mechanicsRepository.update(id, updateMechanic);
+      }
 
       const updatedMechanic = await this.findById(mechanic.id);
-      return {
-        updatedMechanic,
-      };
+      return updatedMechanic;
     } catch (e) {
       return {
         message: e.message,
       };
     }
+  }
+
+  async findOneByEmail(email: string) {
+    try {
+      const client = await this.mechanicsRepository.findOneBy({ email });
+
+      if (!client) {
+        return null;
+      }
+
+      return client;
+    } catch (e) {
+      return {
+        message: e.message,
+      };
+    }
+  }
+
+  async updatePassword(id: string, password: string) {
+    await this.mechanicsRepository.update(id, {
+      password,
+    });
   }
 }

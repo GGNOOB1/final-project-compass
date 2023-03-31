@@ -11,6 +11,7 @@ import { CreateMechanicsDto } from './dtos/create-mechanics.dto';
 import { MechanicPagination } from './dtos/mechanic-pagination.dto';
 import { UpdateMechanicsDto } from './dtos/update-mechanics.dto';
 import { MechanicsService } from './mechanics.service';
+import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
 
 @Controller('api/v1/mechanics')
 export class MechanicsController {
@@ -27,11 +28,12 @@ export class MechanicsController {
   }
 
   @Patch('/:id')
-  updateMechanics(
+  async updateMechanics(
     @Param('id') id: string,
     @Body() updateMechanicsDto: UpdateMechanicsDto,
   ) {
-    return this.mechanicsService.update(id, updateMechanicsDto);
+    const mechanic = await this.mechanicsService.update(id, updateMechanicsDto);
+    return await removeFieldsInObjects(mechanic, ['password']);
   }
 
   @Get('/:id')
