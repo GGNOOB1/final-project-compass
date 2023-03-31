@@ -23,16 +23,13 @@ export class PartsService {
 
   async find(partsPagination: PartsPagination) {
     try {
-      const { limit, offset } = partsPagination;
+      const { limit, offset, ...query } = partsPagination;
 
       const parts = await this.partsRepository.find({
         take: limit,
         skip: offset * limit,
         where: {
-          title: partsPagination.title,
-          description: partsPagination.description,
-          qtd: partsPagination.qtd,
-          unitPrice: partsPagination.unitPrice,
+          ...query,
         },
       });
 

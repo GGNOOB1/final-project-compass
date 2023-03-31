@@ -48,7 +48,7 @@ export class CarsService {
 
   async find(id: string, carPagination: CarPagination) {
     try {
-      const { limit, offset } = carPagination;
+      const { limit, offset, ...query } = carPagination;
 
       const client = await this.clientsService.findOne(id);
 
@@ -60,11 +60,7 @@ export class CarsService {
         take: limit,
         skip: offset * limit,
         where: {
-          license_plate: carPagination.license_plate,
-          model: carPagination.model,
-          year: carPagination.year,
-          manufacturer: carPagination.manufacturer,
-          color: carPagination.color,
+          ...query,
         },
       });
 
