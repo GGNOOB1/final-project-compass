@@ -13,7 +13,7 @@ import { ServicesPagination } from './dtos/services-pagination.dto';
 import { UpdateServicesDto } from './dtos/update-services.dto';
 import { Mechanics } from 'src/mechanics/mechanics.entity';
 import { formatDate } from 'src/utils/formatDate';
-import { calculatePrice } from './utils/calculatePrice';
+import { calculatePricePost } from './utils/calculatePricePost';
 
 @Injectable()
 export class ServicesService {
@@ -74,7 +74,7 @@ export class ServicesService {
     for (let orderPart of parts) {
       const currentPart = await this.partsService.findById(orderPart.partId);
 
-      const { totalPriceRight, quantityLeft, orderQtd } = calculatePrice(
+      const { totalPriceRight, quantityLeft, orderQtd } = calculatePricePost(
         orderPart,
         currentPart,
         mechanic.serviceFee,
@@ -128,6 +128,22 @@ export class ServicesService {
     if (services.length === 0) {
       throw new NotFoundException('There are no services in the database');
     }
+
+    services.map(async (service) => {
+      let { serviceFee } = await this.mechanicsService.findById(
+        service.mechanicId,
+      );
+
+      let totalPrice = 0;
+      service.partsOrder.map((part) => {
+        const partialPrice = parseFloat(part.unitPrice) * part.qtd;
+        const total = partialPrice - partialPrice * (serviceFee / 100);
+
+        totalPrice += total;
+      });
+    });
+
+    console.log(services);
     return {
       limit,
       offset,
@@ -150,7 +166,7 @@ export class ServicesService {
     const mechanic = await this.mechanicsService.findById(service.mechanicId);
     let totalPrice = 0;
     service.partsOrder.map((part) => {
-      const { totalPriceRight } = calculatePrice(
+      const { totalPriceRight } = calculatePricePost(
         part,
         part,
         mechanic.serviceFee,
