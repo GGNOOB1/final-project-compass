@@ -16,5 +16,5 @@ export class LoginUpdatePasswordDto {
   @MaxLength(15)
   @MinLength(5)
   @IsNotEmpty()
-  senha: string;
+  password: string;
 }

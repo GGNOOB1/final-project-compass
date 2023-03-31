@@ -1,7 +1,8 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsJWT, IsNotEmpty, IsString } from 'class-validator';
 
 export class TokenDto {
   @IsString()
+  @IsJWT()
   @IsNotEmpty()
-  token: string;
+  access_token: string;
 }
