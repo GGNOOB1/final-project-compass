@@ -52,7 +52,7 @@ export class UpdateClientsDto {
   email: string;
 
   @IsString()
-  @IsPostalCode()
+  @IsPostalCode('BR')
   @IsNotEmpty()
   @IsOptional()
   zipcode: string;

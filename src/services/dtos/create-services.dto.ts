@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDate,
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -7,8 +8,10 @@ import {
   IsUUID,
   MaxLength,
   MinLength,
+  Validate,
 } from 'class-validator';
 import { Parts } from 'src/parts/parts.entity';
+import { DateValidator } from 'src/validators/date.validator';
 import { Status } from '../utils/status-enum';
 
 export class CreateServicesDto {
@@ -27,8 +30,8 @@ export class CreateServicesDto {
   @IsUUID()
   mechanicId: string;
 
+  @IsString()
   @IsNotEmpty()
-  @IsDateString()
   serviceEstimatedDeliveryDate: Date;
 
   @IsString()

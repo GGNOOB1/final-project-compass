@@ -32,7 +32,7 @@ export class CreateMechanicsDto {
   @IsString()
   @Validate(DateValidator)
   @IsNotEmpty()
-  birthday: string;
+  birthday: Date;
 
   @IsPhoneNumber('BR')
   @IsString()
@@ -71,7 +71,7 @@ export class CreateMechanicsDto {
   @IsString()
   @Validate(DateValidator)
   @IsNotEmpty()
-  hiringDate: string;
+  hiringDate: Date;
 
   @IsNumber()
   @IsNotEmpty()

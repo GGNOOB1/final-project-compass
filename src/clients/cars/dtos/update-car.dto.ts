@@ -1,11 +1,7 @@
 import {
   IsNotEmpty,
-  IsNumber,
-  IsPositive,
   IsString,
-  Max,
   MaxLength,
-  Min,
   MinLength,
   IsOptional,
 } from 'class-validator';
@@ -22,10 +18,6 @@ export class UpdateCarDto {
   model: string;
 
   @IsOptional()
-  @Min(1900)
-  @Max(2100)
-  @IsPositive()
-  @IsNumber()
   @IsNotEmpty()
   year: number;
 

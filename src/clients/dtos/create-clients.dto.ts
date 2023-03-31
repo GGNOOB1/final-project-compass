@@ -33,7 +33,7 @@ export class CreateClientsDto {
   @IsString()
   @Validate(DateValidator)
   @IsNotEmpty()
-  birthday: string;
+  birthday: Date;
 
   @IsPhoneNumber('BR')
   @IsString()
