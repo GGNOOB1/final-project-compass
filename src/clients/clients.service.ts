@@ -1,17 +1,15 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Clients } from './clients.entity';
 import { CreateClientsDto } from './dtos/create-clients.dto';
-import * as moment from 'moment';
 import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
 import { UpdateClientsDto } from './dtos/update-clients.dto';
-import { removePasswordInArrays } from 'src/utils/removePasswordInArrays';
 import { ClientPagination } from './dtos/client-pagination.dto';
+import { verifyPassword } from 'src/utils/verifyPasswords';
+import { encryptPassword } from 'src/utils/encryptPassword';
+import { formatDate } from 'src/utils/formatDate';
+import { removePasswordInArrays } from 'src/utils/removePasswordInArrays';
 
 @Injectable()
 export class ClientsService {
@@ -21,10 +19,17 @@ export class ClientsService {
 
   async create(createClientsDto: CreateClientsDto) {
     try {
-      createClientsDto.birthday = moment(
-        createClientsDto.birthday,
-        'DD/MM/YYYY',
-      ).toISOString();
+      createClientsDto.birthday = formatDate(createClientsDto.birthday);
+
+      verifyPassword(
+        createClientsDto.password,
+        createClientsDto.confirmPassword,
+      );
+
+      createClientsDto.password = await encryptPassword(
+        createClientsDto.password,
+      );
+
       const client = await this.clientsRepository.save(createClientsDto);
       return removeFieldsInObjects(client, ['password', 'confirmPassword']);
     } catch (e) {
@@ -35,29 +40,21 @@ export class ClientsService {
   }
 
   async find(clientPagination: ClientPagination) {
-    const { limit, offset } = clientPagination;
+    const { limit, offset, ...query } = clientPagination;
 
     const clients = await this.clientsRepository.find({
       take: limit,
       skip: offset * limit,
       where: {
-        name: clientPagination.name,
-        cpf_cnpj: clientPagination.cpf_cnpj,
-        client_type: clientPagination.client_type,
-        birthday: clientPagination.birthday,
-        phone: clientPagination.phone,
-        email: clientPagination.email,
-        street: clientPagination.street,
-        number: clientPagination.number,
-        neighbourhood: clientPagination.neighbourhood,
-        city: clientPagination.city,
-        zipcode: clientPagination.zipcode,
+        ...query,
       },
     });
 
     if (clients.length === 0) {
       throw new NotFoundException('Data not found');
     }
+
+    removePasswordInArrays(clients);
 
     return {
       limit,
@@ -95,12 +92,32 @@ export class ClientsService {
     }
   }
 
+  async findOneByEmail(email: string) {
+    try {
+      const client = await this.clientsRepository.findOneBy({ email });
+
+      if (!client) {
+        return null;
+      }
+
+      return client;
+    } catch (e) {
+      return {
+        message: e.message,
+      };
+    }
+  }
+
   async update(id: string, updateClientsDto: UpdateClientsDto) {
     try {
+      if (updateClientsDto.birthday) {
+        updateClientsDto.birthday = formatDate(updateClientsDto.birthday);
+      }
+
       const client = await this.findById(id);
 
       if (!client) {
-        throw new NotFoundException('This id don');
+        throw new NotFoundException('This id dont exist');
       }
 
       await this.clientsRepository.update(id, updateClientsDto);
@@ -112,5 +129,11 @@ export class ClientsService {
         message: e.message,
       };
     }
+  }
+
+  async updatePassword(id: string, password: string) {
+    await this.clientsRepository.update(id, {
+      password,
+    });
   }
 }

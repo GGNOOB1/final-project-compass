@@ -11,12 +11,13 @@ export class Clients {
   name: string;
 
   @Column()
+  @Index({ unique: true })
   cpf_cnpj: string;
 
   @Column()
   client_type: string;
 
-  @Column({ type: 'timestamp with time zone' })
+  @Column({ type: 'date' })
   birthday: Date;
 
   @Column()

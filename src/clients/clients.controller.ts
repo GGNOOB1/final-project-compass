@@ -19,8 +19,14 @@ export class ClientsController {
 
   @Get()
   async listClients(@Query() clientPagination: ClientPagination) {
-    const clients = await this.clientsService.find(clientPagination);
-    return removeFieldsInObjects(clients, ['password']);
+    try {
+      const clients = await this.clientsService.find(clientPagination);
+      return removeFieldsInObjects(clients, ['password']);
+    } catch (e) {
+      return {
+        message: e.message,
+      };
+    }
   }
 
   @Post()
