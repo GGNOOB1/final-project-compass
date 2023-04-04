@@ -1,18 +1,16 @@
 import {
   IsArray,
-  IsDate,
-  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsString,
   IsUUID,
   MaxLength,
   MinLength,
-  Validate,
+  ValidateNested,
 } from 'class-validator';
-import { Parts } from 'src/parts/parts.entity';
-import { DateValidator } from 'src/validators/date.validator';
 import { Status } from '../utils/status-enum';
+import { PartDto } from './part.dto';
+import { Type } from 'class-transformer';
 
 export class CreateServicesDto {
   @IsString()
@@ -41,7 +39,9 @@ export class CreateServicesDto {
   description: string;
 
   @IsArray()
-  parts: Parts[];
+  @ValidateNested({ each: true })
+  @Type(() => PartDto)
+  parts: PartDto[];
 
   @IsEnum(Status)
   @IsString()
