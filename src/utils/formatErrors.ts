@@ -1,6 +1,7 @@
-// Lembrar do if validation
+import { Error } from 'src/interfaces/error';
 
-export function formatErrors(error) {
+// Lembrar do if validation
+export function formatErrors(error): Error {
   return {
     statusCode: error.statusCode,
     message: error.message,
