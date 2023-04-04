@@ -14,6 +14,9 @@ import { CarPagination } from './dtos/car-pagination.dto';
 import { CreateCarDto } from './dtos/create-car.dto';
 import { UpdateCarDto } from './dtos/update-car.dto';
 import { formatErrors } from 'src/utils/formatErrors';
+import { Cars } from './cars.entity';
+import { Error } from 'src/interfaces/error';
+import { GetAllReturn } from 'src/interfaces/getAllReturn';
 
 @Controller('api/v1/clients/:id/cars')
 export class CarsController {
@@ -23,7 +26,7 @@ export class CarsController {
   async listCars(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Query() carPagination: CarPagination,
-  ) {
+  ): Promise<GetAllReturn | Error> {
     try {
       return this.carsService.find(id, carPagination);
     } catch (error) {
@@ -35,7 +38,7 @@ export class CarsController {
   async addClientCar(
     @Body() createCarDto: CreateCarDto,
     @Param('id', new ParseUUIDPipe()) id: string,
-  ) {
+  ): Promise<Partial<Cars> | Error> {
     try {
       return this.carsService.create(createCarDto, id);
     } catch (error) {
@@ -48,7 +51,7 @@ export class CarsController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('carId', new ParseUUIDPipe()) carId: string,
     @Body() updatedCarDto: UpdateCarDto,
-  ) {
+  ): Promise<Partial<Cars> | Error> {
     try {
       return this.carsService.update(id, carId, updatedCarDto);
     } catch (error) {
@@ -60,7 +63,7 @@ export class CarsController {
   async removeClientCar(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('carId', new ParseUUIDPipe()) carId: string,
-  ) {
+  ): Promise<void | Error> {
     try {
       return this.carsService.delete(id, carId);
     } catch (error) {
@@ -72,7 +75,7 @@ export class CarsController {
   async getClientCarById(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('carId', new ParseUUIDPipe()) carId: string,
-  ) {
+  ): Promise<Partial<Cars> | Error> {
     try {
       return this.carsService.findClientCarById(id, carId);
     } catch (error) {

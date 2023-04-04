@@ -13,13 +13,18 @@ import { ServicesPagination } from './dtos/services-pagination.dto';
 import { UpdateServicesDto } from './dtos/update-services.dto';
 import { ServicesService } from './services.service';
 import { formatErrors } from 'src/utils/formatErrors';
+import { Error } from 'src/interfaces/error';
+import { GetAllReturn } from 'src/interfaces/getAllReturn';
+import { Services } from './services.entity';
 
 @Controller('api/v1/services')
 export class ServicesController {
   constructor(private servicesService: ServicesService) {}
 
   @Get()
-  async listServices(@Query() servicesPagination: ServicesPagination) {
+  async listServices(
+    @Query() servicesPagination: ServicesPagination,
+  ): Promise<GetAllReturn | Error> {
     try {
       return this.servicesService.find(servicesPagination);
     } catch (error) {
@@ -28,7 +33,9 @@ export class ServicesController {
   }
 
   @Post()
-  async createServices(@Body() createServicesDto: CreateServicesDto) {
+  async createServices(
+    @Body() createServicesDto: CreateServicesDto,
+  ): Promise<Partial<Services> | Error> {
     try {
       return this.servicesService.create(createServicesDto);
     } catch (error) {
@@ -40,8 +47,9 @@ export class ServicesController {
   async updatesServices(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateServicesDto: UpdateServicesDto,
-  ) {
+  ): Promise<Partial<Services> | Error> {
     try {
+      console.log(id);
       return this.servicesService.update(id, updateServicesDto);
     } catch (error) {
       return formatErrors(error);
@@ -49,7 +57,9 @@ export class ServicesController {
   }
 
   @Get('/:id')
-  async getServicesById(@Param('id', new ParseUUIDPipe()) id: string) {
+  async getServicesById(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<Partial<Services> | Error> {
     try {
       return this.servicesService.findById(id);
     } catch (error) {

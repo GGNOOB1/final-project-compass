@@ -5,32 +5,48 @@ import {
   HttpStatus,
   Post,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { AuthMechanicsService } from './auth.mechanics.service';
 import { TokenDto } from './dtos/token.dto';
+import { AuthGuard } from './guards/auth.guard';
+import { formatErrors } from 'src/utils/formatErrors';
+import { Error } from 'src/interfaces/error';
 
 @Controller('api/v1/mechanic')
 export class AuthMechanicsController {
   constructor(private authMechanicService: AuthMechanicsService) {}
 
   @Post('/login')
-  login(@Body() loginMechanic: LoginUpdatePasswordDto) {
-    return this.authMechanicService.signIn(loginMechanic);
+  async login(
+    @Body() loginMechanic: LoginUpdatePasswordDto,
+  ): Promise<TokenDto | Error> {
+    try {
+      return await this.authMechanicService.signIn(loginMechanic);
+    } catch (error) {
+      return formatErrors(error);
+    }
   }
 
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('/updatePassword')
-  updatePasswordMechanic(@Body() loginMechanic: LoginUpdatePasswordDto) {
-    return this.authMechanicService.updatePassword(loginMechanic);
+  async updatePasswordMechanic(@Body() loginMechanic: LoginUpdatePasswordDto) {
+    try {
+      return await this.authMechanicService.updatePassword(loginMechanic);
+    } catch (error) {
+      return formatErrors(error);
+    }
   }
 
+  @UseGuards(AuthGuard)
   @Post('/refreshToken')
-  async refreshToken(@Body() token: TokenDto) {
+  async refreshToken(@Body() token: TokenDto): Promise<Object | Error> {
     try {
       return await this.authMechanicService.refreshToken(token.access_token);
-    } catch (e) {
-      throw new BadRequestException(e.message);
+    } catch (error) {
+      return formatErrors(error);
     }
   }
 }

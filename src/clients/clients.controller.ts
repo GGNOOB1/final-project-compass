@@ -14,13 +14,17 @@ import { ClientPagination } from './dtos/client-pagination.dto';
 import { CreateClientsDto } from './dtos/create-clients.dto';
 import { UpdateClientsDto } from './dtos/update-clients.dto';
 import { formatErrors } from 'src/utils/formatErrors';
+import { Clients } from './clients.entity';
+import { Error } from 'src/interfaces/error';
 
 @Controller('api/v1/clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
   @Get()
-  async listClients(@Query() clientPagination: ClientPagination) {
+  async listClients(
+    @Query() clientPagination: ClientPagination,
+  ): Promise<Partial<Clients> | Error> {
     try {
       const clients = await this.clientsService.find(clientPagination);
       return removeFieldsInObjects(clients, ['password']);
@@ -30,7 +34,9 @@ export class ClientsController {
   }
 
   @Post()
-  async createClients(@Body() createClientsDto: CreateClientsDto) {
+  async createClients(
+    @Body() createClientsDto: CreateClientsDto,
+  ): Promise<Partial<Clients> | Error> {
     try {
       return this.clientsService.create(createClientsDto);
     } catch (error) {
@@ -42,7 +48,7 @@ export class ClientsController {
   async updateClients(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateClientsDto: UpdateClientsDto,
-  ) {
+  ): Promise<Partial<Clients> | Error> {
     try {
       const client = await this.clientsService.update(id, updateClientsDto);
       return removeFieldsInObjects(client, ['password']);
@@ -52,7 +58,9 @@ export class ClientsController {
   }
 
   @Get('/:id')
-  async getClientsById(@Param('id', new ParseUUIDPipe()) id: string) {
+  async getClientsById(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<Partial<Clients> | Error> {
     try {
       const client = await this.clientsService.findById(id);
       return removeFieldsInObjects(client, ['password']);
