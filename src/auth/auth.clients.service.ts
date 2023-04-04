@@ -56,17 +56,17 @@ export class AuthClientService {
     return;
   }
 
-  async refreshToken(token: string) {
-    const verificatedToken = await this.jwtService.verifyAsync(token);
+  async refreshToken(currentToken: string) {
+    const verificatedToken = await this.jwtService.verifyAsync(currentToken);
     const user = await this.clientsService.findById(verificatedToken.sub);
     const payload = {
       username: user['name'],
       sub: user['id'],
     };
 
-    const newToken = await this.jwtService.signAsync(payload);
+    const token = await this.jwtService.signAsync(payload);
     return {
-      newToken,
+      token,
     };
   }
 }

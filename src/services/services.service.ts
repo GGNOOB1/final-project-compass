@@ -14,6 +14,7 @@ import { UpdateServicesDto } from './dtos/update-services.dto';
 import { Mechanics } from 'src/mechanics/mechanics.entity';
 import { formatDate } from 'src/utils/formatDate';
 import { calculatePricePost } from './utils/calculatePricePost';
+import { checkParts } from './utils/checkParts';
 
 @Injectable()
 export class ServicesService {
@@ -52,23 +53,7 @@ export class ServicesService {
 
     for (let orderPart of parts) {
       const currentPart = await this.partsService.findById(orderPart.partId);
-      if (!currentPart) {
-        throw new NotFoundException(
-          `This part id: ${orderPart.partId} does not exist`,
-        );
-      }
-
-      if (currentPart.qtd === 0) {
-        throw new BadRequestException(
-          `The product: ${currentPart.title} sold out`,
-        );
-      }
-
-      if (orderPart.qtd > currentPart.qtd) {
-        throw new BadRequestException(
-          `We don't have this quantity of ${currentPart.title}, just ${currentPart.qtd}`,
-        );
-      }
+      checkParts(currentPart, orderPart);
     }
 
     for (let orderPart of parts) {
@@ -104,13 +89,13 @@ export class ServicesService {
       description: createServicesDto.description,
       status: createServicesDto.status,
       partsOrder: listPartOrders,
+      totalPrice,
     });
 
     await this.servicesRepository.save(service);
 
     return {
       ...service,
-      totalPrice,
     };
   }
 
@@ -128,21 +113,6 @@ export class ServicesService {
     if (services.length === 0) {
       throw new NotFoundException('There are no services in the database');
     }
-
-    services.map(async (service) => {
-      let { serviceFee } = await this.mechanicsService.findById(
-        service.mechanicId,
-      );
-
-      let totalPrice = 0;
-      service.partsOrder.map((part) => {
-        const partialPrice = parseFloat(part.unitPrice) * part.qtd;
-        const total = partialPrice - partialPrice * (serviceFee / 100);
-
-        totalPrice += total;
-      });
-    });
-
     return {
       limit,
       offset,
@@ -162,21 +132,8 @@ export class ServicesService {
       throw new BadRequestException("This id don't exist");
     }
 
-    const mechanic = await this.mechanicsService.findById(service.mechanicId);
-    let totalPrice = 0;
-    service.partsOrder.map((part) => {
-      const { totalPriceRight } = calculatePricePost(
-        part,
-        part,
-        mechanic.serviceFee,
-      );
-
-      totalPrice += totalPriceRight;
-    });
-
     return {
       ...service,
-      totalPrice,
     };
   }
 
@@ -184,20 +141,65 @@ export class ServicesService {
     @Param('id') id: string,
     @Body() updateServicesDto: UpdateServicesDto,
   ) {
+    const { parts } = updateServicesDto;
+    delete updateServicesDto.parts;
+
     updateServicesDto.serviceEstimatedDeliveryDate = formatDate(
       updateServicesDto.serviceEstimatedDeliveryDate,
     );
 
-    await this.clientsService.findById(updateServicesDto.clientId);
+    const service = await this.findById(id);
     await this.carsService.findClientCarById(
       updateServicesDto.clientId,
       updateServicesDto.carId,
     );
-    await this.mechanicsService.findOne(updateServicesDto.mechanicId);
+    const mechanic = await this.mechanicsService.findOne(
+      updateServicesDto.mechanicId,
+    );
 
     await this.servicesRepository.update(id, updateServicesDto);
-    const service = this.servicesRepository.findOneBy({ id });
 
-    return service;
+    if (parts) {
+      for (let part of parts) {
+        const currentPart = await this.partsService.findById(part.partId);
+
+        checkParts(currentPart, part);
+
+        await this.partsOrderRepository.save({
+          description: currentPart.description,
+          title: currentPart.title,
+          qtd: part.qtd,
+          unitPrice: currentPart.unitPrice,
+          service,
+        });
+
+        const quantityLeft = currentPart.qtd - part.qtd;
+
+        await this.partsService.update(currentPart.partId, {
+          qtd: quantityLeft,
+        });
+      }
+    }
+
+    const newService = await this.servicesRepository.findOneBy({ id });
+
+    let totalPrice = 0;
+
+    for (let part of newService.partsOrder) {
+      const resultWithoutServiceFee = part.qtd * parseFloat(part.unitPrice);
+      const result =
+        resultWithoutServiceFee -
+        resultWithoutServiceFee * (mechanic.serviceFee / 100);
+
+      totalPrice += result;
+    }
+
+    await this.servicesRepository.update(id, {
+      totalPrice,
+    });
+
+    const updatedService = await this.servicesRepository.findOneBy({ id });
+
+    return updatedService;
   }
 }

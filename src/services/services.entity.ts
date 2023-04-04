@@ -1,13 +1,4 @@
-import { Parts } from 'src/parts/parts.entity';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  JoinColumn,
-  ManyToMany,
-  JoinTable,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { PartsOrder } from './partsOrder.entity';
 
 @Entity()
@@ -37,4 +28,7 @@ export class Services {
 
   @Column()
   status: string;
+
+  @Column('decimal', { precision: 10, scale: 2 })
+  totalPrice: number;
 }
