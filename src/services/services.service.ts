@@ -41,10 +41,6 @@ export class ServicesService {
     let totalPrice = 0;
     let listPartOrders = [];
 
-    createServicesDto.serviceEstimatedDeliveryDate = formatDate(
-      createServicesDto.serviceEstimatedDeliveryDate,
-    );
-
     const mechanic = await this.checkAllIds(
       createServicesDto.clientId,
       createServicesDto.mechanicId,

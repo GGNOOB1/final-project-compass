@@ -18,8 +18,6 @@ export class ClientsService {
   ) {}
 
   async create(createClientsDto: CreateClientsDto) {
-    createClientsDto.birthday = formatDate(createClientsDto.birthday);
-
     verifyPassword(createClientsDto.password, createClientsDto.confirmPassword);
 
     createClientsDto.password = await encryptPassword(
