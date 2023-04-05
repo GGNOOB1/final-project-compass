@@ -1,10 +1,5 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MechanicsService } from 'src/mechanics/mechanics.service';
-import * as bcrypt from 'bcrypt';
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { JwtService } from '@nestjs/jwt/dist';
 import { verifyPasswordAndEmail } from './utils/verifyPasswordAndEmail';
@@ -26,15 +21,11 @@ export class AuthMechanicsService {
       loginMechanic,
     );
 
-    if (!user) {
-      throw new NotFoundException('This email does not exist');
-    }
-    const hashedPassword = user['password'];
-
-    if (!(await comparePasswords(loginMechanic.password, hashedPassword))) {
-      throw new BadRequestException('Your password is wrong!');
-    }
-    const payload = { username: user['name'], sub: user['id'] };
+    const payload = {
+      username: user['name'],
+      sub: user['id'],
+      type: 'mechanic',
+    };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
@@ -55,10 +46,12 @@ export class AuthMechanicsService {
 
   async refreshToken(currentToken: string) {
     const verificatedToken = await this.jwtService.verifyAsync(currentToken);
+
     const user = await this.mechanicsService.findById(verificatedToken.sub);
     const payload = {
       username: user['name'],
       sub: user['id'],
+      type: 'mechanic',
     };
 
     const token = await this.jwtService.signAsync(payload);

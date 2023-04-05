@@ -53,9 +53,14 @@ export class CarsService {
       take: limit,
       skip: offset * limit,
       where: {
+        client,
         ...query,
       },
     });
+
+    if (cars.length === 0) {
+      throw new NotFoundException('Car data not found');
+    }
 
     return {
       limit,
