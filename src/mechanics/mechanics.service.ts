@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMechanicsDto } from './dtos/create-mechanics.dto';
 import { Mechanics } from './mechanics.entity';
-import * as moment from 'moment';
 import { Specialties } from './specialties.entity';
 import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
 import { removePasswordInArrays } from 'src/utils/removePasswordInArrays';
@@ -26,10 +25,6 @@ export class MechanicsService {
   ) {}
 
   async create(createMechanicsDto: CreateMechanicsDto) {
-    createMechanicsDto.birthday = formatDate(createMechanicsDto.birthday);
-
-    createMechanicsDto.hiringDate = formatDate(createMechanicsDto.hiringDate);
-
     const specialties = createMechanicsDto.specialties;
 
     delete createMechanicsDto.specialties;
@@ -126,11 +121,6 @@ export class MechanicsService {
     const mechanic = await this.mechanicsRepository.findOneBy({ id });
     if (!mechanic) {
       throw new NotFoundException('Mechanic id not found');
-    }
-
-    if (updateMechanic.birthday || updateMechanic.hiringDate) {
-      updateMechanic.birthday = formatDate(updateMechanic.birthday);
-      updateMechanic.hiringDate = formatDate(updateMechanic.hiringDate);
     }
 
     if (specialties) {
