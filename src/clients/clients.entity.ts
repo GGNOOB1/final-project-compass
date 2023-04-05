@@ -17,7 +17,7 @@ export class Clients {
   @Column()
   client_type: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamptz' })
   birthday: Date;
 
   @Column()

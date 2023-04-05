@@ -20,7 +20,7 @@ export class Mechanics {
   @Column()
   cpf: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamptz' })
   birthday: Date;
 
   @Column()
@@ -39,7 +39,7 @@ export class Mechanics {
   @JoinColumn()
   specialties: Specialties[];
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamptz' })
   hiringDate: Date;
 
   @Column()

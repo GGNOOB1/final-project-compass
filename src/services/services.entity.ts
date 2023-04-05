@@ -15,7 +15,7 @@ export class Services {
   @Column()
   mechanicId: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamptz' })
   serviceEstimatedDeliveryDate: Date;
 
   @Column()
