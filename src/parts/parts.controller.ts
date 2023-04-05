@@ -6,7 +6,6 @@ import {
   Post,
   Param,
   Query,
-  NotFoundException,
   ParseUUIDPipe,
   UseGuards,
   UseInterceptors,
@@ -15,12 +14,12 @@ import { CreatePartsDto } from './dtos/create-parts.dto';
 import { PartsPagination } from './dtos/parts-pagination.dto';
 import { UpdatePartsDto } from './dtos/update-parts.dto';
 import { PartsService } from './parts.service';
-import { formatErrors } from 'src/utils/formatErrors';
-import { GetAllReturn } from 'src/interfaces/getAllReturn';
-import { Error } from 'src/interfaces/error';
+import { formatErrors } from '../utils/formatErrors';
+import { GetAllReturn } from '../interfaces/getAllReturn';
+import { Error } from '../interfaces/error';
 import { Parts } from './parts.entity';
-import { JwtAuth } from 'src/auth/guards/jwt.guard';
-import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
+import { JwtAuth } from '../auth/guards/jwt.guard';
+import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
 
 @Controller('api/v1/parts')
 export class PartsController {

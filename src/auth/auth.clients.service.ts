@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ClientsService } from 'src/clients/clients.service';
+import { ClientsService } from '../clients/clients.service';
 
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { JwtService } from '@nestjs/jwt';
 import { verifyPasswordAndEmail } from './utils/verifyPasswordAndEmail';
 import { comparePasswords } from './utils/comparePasswords';
 import { verifyEmail } from './utils/verifyEmail';
-import { encryptPassword } from 'src/utils/encryptPassword';
-import { Request } from 'express';
+import { encryptPassword } from '../utils/encryptPassword';
 
 @Injectable()
 export class AuthClientService {

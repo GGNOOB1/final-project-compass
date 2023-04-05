@@ -12,7 +12,7 @@ import {
   IsDate,
 } from 'class-validator';
 
-import { CpfValidator } from 'src/validators/cpf.validator';
+import { CpfValidator } from '../../validators/cpf.validator';
 import { Status } from '../utils/status-enum';
 
 export class CreateMechanicsDto {

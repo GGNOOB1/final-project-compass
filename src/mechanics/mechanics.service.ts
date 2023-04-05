@@ -8,13 +8,12 @@ import { Repository } from 'typeorm';
 import { CreateMechanicsDto } from './dtos/create-mechanics.dto';
 import { Mechanics } from './mechanics.entity';
 import { Specialties } from './specialties.entity';
-import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
-import { removePasswordInArrays } from 'src/utils/removePasswordInArrays';
+import { removeFieldsInObjects } from '../utils/removeFieldsInObjects';
+import { removePasswordInArrays } from '../utils/removePasswordInArrays';
 import { UpdateMechanicsDto } from './dtos/update-mechanics.dto';
 import { MechanicPagination } from './dtos/mechanic-pagination.dto';
-import { verifyPassword } from 'src/utils/verifyPasswords';
-import { encryptPassword } from 'src/utils/encryptPassword';
-import { formatDate } from 'src/utils/formatDate';
+import { verifyPassword } from '../utils/verifyPasswords';
+import { encryptPassword } from '../utils/encryptPassword';
 @Injectable()
 export class MechanicsService {
   constructor(

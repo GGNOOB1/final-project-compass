@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { MechanicsService } from 'src/mechanics/mechanics.service';
+import { MechanicsService } from '../mechanics/mechanics.service';
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { JwtService } from '@nestjs/jwt/dist';
 import { verifyPasswordAndEmail } from './utils/verifyPasswordAndEmail';
 import { comparePasswords } from './utils/comparePasswords';
-import { encryptPassword } from 'src/utils/encryptPassword';
+import { encryptPassword } from '../utils/encryptPassword';
 import { verifyEmail } from './utils/verifyEmail';
 
 @Injectable()

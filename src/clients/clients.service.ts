@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Clients } from './clients.entity';
 import { CreateClientsDto } from './dtos/create-clients.dto';
-import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
+import { removeFieldsInObjects } from '../utils/removeFieldsInObjects';
 import { UpdateClientsDto } from './dtos/update-clients.dto';
 import { ClientPagination } from './dtos/client-pagination.dto';
-import { verifyPassword } from 'src/utils/verifyPasswords';
-import { encryptPassword } from 'src/utils/encryptPassword';
-import { formatDate } from 'src/utils/formatDate';
-import { removePasswordInArrays } from 'src/utils/removePasswordInArrays';
+import { verifyPassword } from '../utils/verifyPasswords';
+import { encryptPassword } from '../utils/encryptPassword';
+import { formatDate } from '../utils/formatDate';
+import { removePasswordInArrays } from '../utils/removePasswordInArrays';
 
 @Injectable()
 export class ClientsService {

@@ -14,14 +14,14 @@ import { CreateMechanicsDto } from './dtos/create-mechanics.dto';
 import { MechanicPagination } from './dtos/mechanic-pagination.dto';
 import { UpdateMechanicsDto } from './dtos/update-mechanics.dto';
 import { MechanicsService } from './mechanics.service';
-import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
-import { formatErrors } from 'src/utils/formatErrors';
+import { removeFieldsInObjects } from '../utils/removeFieldsInObjects';
+import { formatErrors } from '../utils/formatErrors';
 import { Mechanics } from './mechanics.entity';
-import { Error } from 'src/interfaces/error';
-import { GetAllReturn } from 'src/interfaces/getAllReturn';
-import { JwtAuth } from 'src/auth/guards/jwt.guard';
-import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
-import { DateInterceptor } from 'src/interceptors/date.interceptor';
+import { Error } from '../interfaces/error';
+import { GetAllReturn } from '../interfaces/getAllReturn';
+import { JwtAuth } from '../auth/guards/jwt.guard';
+import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
+import { DateInterceptor } from '../interceptors/date.interceptor';
 
 @Controller('api/v1/mechanics')
 export class MechanicsController {

@@ -1,7 +1,6 @@
 import {
   IsArray,
   IsDate,
-  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -11,7 +10,6 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { Parts } from 'src/parts/parts.entity';
 import { Status } from '../utils/status-enum';
 import { PartDto } from './part.dto';
 import { Type } from 'class-transformer';

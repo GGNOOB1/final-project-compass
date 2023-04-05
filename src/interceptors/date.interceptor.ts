@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { formatDate } from 'src/utils/formatDate';
+import { formatDate } from '../utils/formatDate';
 
 @Injectable()
 export class DateInterceptor implements NestInterceptor {

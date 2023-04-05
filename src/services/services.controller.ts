@@ -14,13 +14,13 @@ import { CreateServicesDto } from './dtos/create-services.dto';
 import { ServicesPagination } from './dtos/services-pagination.dto';
 import { UpdateServicesDto } from './dtos/update-services.dto';
 import { ServicesService } from './services.service';
-import { formatErrors } from 'src/utils/formatErrors';
-import { Error } from 'src/interfaces/error';
-import { GetAllReturn } from 'src/interfaces/getAllReturn';
+import { formatErrors } from '../utils/formatErrors';
+import { Error } from '../interfaces/error';
+import { GetAllReturn } from '../interfaces/getAllReturn';
 import { Services } from './services.entity';
-import { JwtAuth } from 'src/auth/guards/jwt.guard';
-import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
-import { DateInterceptor } from 'src/interceptors/date.interceptor';
+import { JwtAuth } from '../auth/guards/jwt.guard';
+import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
+import { DateInterceptor } from '../interceptors/date.interceptor';
 
 @Controller('api/v1/services')
 export class ServicesController {
@@ -53,6 +53,7 @@ export class ServicesController {
   }
 
   @UseInterceptors(MechanicInterceptor)
+  @UseInterceptors(DateInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:id')
   async updatesServices(

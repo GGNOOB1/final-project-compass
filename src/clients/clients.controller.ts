@@ -10,23 +10,28 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
+import { removeFieldsInObjects } from '../utils/removeFieldsInObjects';
 import { ClientsService } from './clients.service';
 import { ClientPagination } from './dtos/client-pagination.dto';
 import { CreateClientsDto } from './dtos/create-clients.dto';
 import { UpdateClientsDto } from './dtos/update-clients.dto';
-import { formatErrors } from 'src/utils/formatErrors';
+import { formatErrors } from '../utils/formatErrors';
 import { Clients } from './clients.entity';
-import { Error } from 'src/interfaces/error';
-import { JwtAuth } from 'src/auth/guards/jwt.guard';
-import { ClientInterceptor } from 'src/interceptors/client.interceptor';
-import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
-import { DateInterceptor } from 'src/interceptors/date.interceptor';
-import { DateFormatInterceptor } from 'src/interceptors/date-format.interceptor';
+import { Error } from '../interfaces/error';
+import { JwtAuth } from '../auth/guards/jwt.guard';
+import { ClientInterceptor } from '../interceptors/client.interceptor';
+import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
+import { DateInterceptor } from '../interceptors/date.interceptor';
+import { DateFormatInterceptor } from '../interceptors/date-format.interceptor';
 
 @Controller('api/v1/clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
+
+  @Get('/test')
+  test() {
+    return 'hi';
+  }
 
   @UseGuards(JwtAuth)
   @UseInterceptors(MechanicInterceptor)

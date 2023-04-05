@@ -1,18 +1,18 @@
 import { Body, Injectable, NotFoundException, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MechanicsService } from 'src/mechanics/mechanics.service';
-import { PartsService } from 'src/parts/parts.service';
+import { MechanicsService } from '../mechanics/mechanics.service';
+import { PartsService } from '../parts/parts.service';
 import { Repository } from 'typeorm';
 import { CreateServicesDto } from './dtos/create-services.dto';
 import { Services } from './services.entity';
 import { BadRequestException } from '@nestjs/common';
-import { ClientsService } from 'src/clients/clients.service';
-import { CarsService } from 'src/clients/cars/cars.service';
+import { ClientsService } from '../clients/clients.service';
+import { CarsService } from '../clients/cars/cars.service';
 import { PartsOrder } from './partsOrder.entity';
 import { ServicesPagination } from './dtos/services-pagination.dto';
 import { UpdateServicesDto } from './dtos/update-services.dto';
-import { Mechanics } from 'src/mechanics/mechanics.entity';
-import { formatDate } from 'src/utils/formatDate';
+import { Mechanics } from '../mechanics/mechanics.entity';
+import { formatDate } from '../utils/formatDate';
 import { calculatePricePost } from './utils/calculatePricePost';
 import { checkParts } from './utils/checkParts';
 

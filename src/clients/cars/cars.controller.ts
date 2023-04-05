@@ -15,12 +15,12 @@ import { CarsService } from './cars.service';
 import { CarPagination } from './dtos/car-pagination.dto';
 import { CreateCarDto } from './dtos/create-car.dto';
 import { UpdateCarDto } from './dtos/update-car.dto';
-import { formatErrors } from 'src/utils/formatErrors';
+import { formatErrors } from '../../utils/formatErrors';
 import { Cars } from './cars.entity';
-import { Error } from 'src/interfaces/error';
-import { GetAllReturn } from 'src/interfaces/getAllReturn';
-import { JwtAuth } from 'src/auth/guards/jwt.guard';
-import { ClientInterceptor } from 'src/interceptors/client.interceptor';
+import { Error } from '../../interfaces/error';
+import { GetAllReturn } from '../../interfaces/getAllReturn';
+import { JwtAuth } from '../../auth/guards/jwt.guard';
+import { ClientInterceptor } from '../../interceptors/client.interceptor';
 
 @Controller('api/v1/clients/:id/cars')
 export class CarsController {

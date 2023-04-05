@@ -11,9 +11,9 @@ import { AuthClientService } from './auth.clients.service';
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { TokenDto } from './dtos/token.dto';
 import { JwtAuth } from './guards/jwt.guard';
-import { formatErrors } from 'src/utils/formatErrors';
-import { Error } from 'src/interfaces/error';
-import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
+import { formatErrors } from '../utils/formatErrors';
+import { Error } from '../interfaces/error';
+import { AuthInterceptor } from '../interceptors/auth.interceptor';
 
 @Controller('api/v1/client')
 export class AuthClientsController {

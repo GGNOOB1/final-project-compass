@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { formatDateForResponse } from 'src/utils/formatDateForResponse';
+import { formatDateForResponse } from '../utils/formatDateForResponse';
 
 @Injectable()
 export class DateFormatInterceptor implements NestInterceptor {
