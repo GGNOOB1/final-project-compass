@@ -21,6 +21,7 @@ import { Error } from 'src/interfaces/error';
 import { GetAllReturn } from 'src/interfaces/getAllReturn';
 import { JwtAuth } from 'src/auth/guards/jwt.guard';
 import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
+import { DateInterceptor } from 'src/interceptors/date.interceptor';
 
 @Controller('api/v1/mechanics')
 export class MechanicsController {
@@ -38,7 +39,7 @@ export class MechanicsController {
     }
   }
 
-  @UseGuards(JwtAuth)
+  @UseInterceptors(DateInterceptor)
   @Post()
   async createMechanics(
     @Body() createMechanicsDto: CreateMechanicsDto,
@@ -51,6 +52,7 @@ export class MechanicsController {
   }
 
   @UseInterceptors(MechanicInterceptor)
+  @UseInterceptors(DateInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:id')
   async updateMechanics(

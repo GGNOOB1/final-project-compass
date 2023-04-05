@@ -20,6 +20,7 @@ import { GetAllReturn } from 'src/interfaces/getAllReturn';
 import { Services } from './services.entity';
 import { JwtAuth } from 'src/auth/guards/jwt.guard';
 import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
+import { DateInterceptor } from 'src/interceptors/date.interceptor';
 
 @Controller('api/v1/services')
 export class ServicesController {
@@ -38,6 +39,7 @@ export class ServicesController {
   }
 
   @UseInterceptors(MechanicInterceptor)
+  @UseInterceptors(DateInterceptor)
   @UseGuards(JwtAuth)
   @Post()
   async createServices(

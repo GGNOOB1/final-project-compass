@@ -21,6 +21,8 @@ import { Error } from 'src/interfaces/error';
 import { JwtAuth } from 'src/auth/guards/jwt.guard';
 import { ClientInterceptor } from 'src/interceptors/client.interceptor';
 import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
+import { DateInterceptor } from 'src/interceptors/date.interceptor';
+import { DateFormatInterceptor } from 'src/interceptors/date-format.interceptor';
 
 @Controller('api/v1/clients')
 export class ClientsController {
@@ -40,6 +42,7 @@ export class ClientsController {
     }
   }
 
+  @UseInterceptors(DateInterceptor)
   @Post()
   async createClients(
     @Body() createClientsDto: CreateClientsDto,
@@ -52,6 +55,7 @@ export class ClientsController {
   }
 
   @UseInterceptors(ClientInterceptor)
+  @UseInterceptors(DateInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:id')
   async updateClients(
