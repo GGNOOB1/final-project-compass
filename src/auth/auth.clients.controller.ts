@@ -5,13 +5,15 @@ import {
   Post,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthClientService } from './auth.clients.service';
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { TokenDto } from './dtos/token.dto';
-import { AuthGuard } from './guards/auth.guard';
+import { JwtAuth } from './guards/jwt.guard';
 import { formatErrors } from 'src/utils/formatErrors';
 import { Error } from 'src/interfaces/error';
+import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
 
 @Controller('api/v1/client')
 export class AuthClientsController {
@@ -28,22 +30,21 @@ export class AuthClientsController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuth)
+  @UseInterceptors(AuthInterceptor)
   @Post('/updatePassword')
   async updatePasswordClient(
     @Body() loginClient: LoginUpdatePasswordDto,
-    @Req() req,
   ): Promise<void | Error> {
     try {
-      console.log(req.user);
-
       return this.authClientService.updatePassword(loginClient);
     } catch (error) {
       return formatErrors(error);
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuth)
+  @UseInterceptors(AuthInterceptor)
   @Post('/refreshToken')
   async refreshToken(@Body() token: TokenDto): Promise<Object | Error> {
     try {

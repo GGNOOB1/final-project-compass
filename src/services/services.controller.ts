@@ -7,6 +7,8 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateServicesDto } from './dtos/create-services.dto';
 import { ServicesPagination } from './dtos/services-pagination.dto';
@@ -16,11 +18,14 @@ import { formatErrors } from 'src/utils/formatErrors';
 import { Error } from 'src/interfaces/error';
 import { GetAllReturn } from 'src/interfaces/getAllReturn';
 import { Services } from './services.entity';
+import { JwtAuth } from 'src/auth/guards/jwt.guard';
+import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
 
 @Controller('api/v1/services')
 export class ServicesController {
   constructor(private servicesService: ServicesService) {}
 
+  @UseGuards(JwtAuth)
   @Get()
   async listServices(
     @Query() servicesPagination: ServicesPagination,
@@ -32,6 +37,8 @@ export class ServicesController {
     }
   }
 
+  @UseInterceptors(MechanicInterceptor)
+  @UseGuards(JwtAuth)
   @Post()
   async createServices(
     @Body() createServicesDto: CreateServicesDto,
@@ -43,6 +50,8 @@ export class ServicesController {
     }
   }
 
+  @UseInterceptors(MechanicInterceptor)
+  @UseGuards(JwtAuth)
   @Patch('/:id')
   async updatesServices(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -56,6 +65,7 @@ export class ServicesController {
     }
   }
 
+  @UseGuards(JwtAuth)
   @Get('/:id')
   async getServicesById(
     @Param('id', new ParseUUIDPipe()) id: string,

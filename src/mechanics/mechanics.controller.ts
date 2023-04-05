@@ -7,6 +7,8 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateMechanicsDto } from './dtos/create-mechanics.dto';
 import { MechanicPagination } from './dtos/mechanic-pagination.dto';
@@ -17,11 +19,14 @@ import { formatErrors } from 'src/utils/formatErrors';
 import { Mechanics } from './mechanics.entity';
 import { Error } from 'src/interfaces/error';
 import { GetAllReturn } from 'src/interfaces/getAllReturn';
+import { JwtAuth } from 'src/auth/guards/jwt.guard';
+import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
 
 @Controller('api/v1/mechanics')
 export class MechanicsController {
   constructor(private mechanicsService: MechanicsService) {}
 
+  @UseGuards(JwtAuth)
   @Get()
   async listMechanics(
     @Query() mechanicPagination: MechanicPagination,
@@ -33,6 +38,7 @@ export class MechanicsController {
     }
   }
 
+  @UseGuards(JwtAuth)
   @Post()
   async createMechanics(
     @Body() createMechanicsDto: CreateMechanicsDto,
@@ -44,6 +50,8 @@ export class MechanicsController {
     }
   }
 
+  @UseInterceptors(MechanicInterceptor)
+  @UseGuards(JwtAuth)
   @Patch('/:id')
   async updateMechanics(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -60,6 +68,7 @@ export class MechanicsController {
     }
   }
 
+  @UseGuards(JwtAuth)
   @Get('/:id')
   async getMechanicsById(
     @Param('id', new ParseUUIDPipe()) id: string,

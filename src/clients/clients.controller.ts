@@ -7,6 +7,8 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { removeFieldsInObjects } from 'src/utils/removeFieldsInObjects';
 import { ClientsService } from './clients.service';
@@ -16,11 +18,16 @@ import { UpdateClientsDto } from './dtos/update-clients.dto';
 import { formatErrors } from 'src/utils/formatErrors';
 import { Clients } from './clients.entity';
 import { Error } from 'src/interfaces/error';
+import { JwtAuth } from 'src/auth/guards/jwt.guard';
+import { ClientInterceptor } from 'src/interceptors/client.interceptor';
+import { MechanicInterceptor } from 'src/interceptors/mechanic.interceptor';
 
 @Controller('api/v1/clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
+  @UseGuards(JwtAuth)
+  @UseInterceptors(MechanicInterceptor)
   @Get()
   async listClients(
     @Query() clientPagination: ClientPagination,
@@ -44,6 +51,8 @@ export class ClientsController {
     }
   }
 
+  @UseInterceptors(ClientInterceptor)
+  @UseGuards(JwtAuth)
   @Patch('/:id')
   async updateClients(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -57,6 +66,8 @@ export class ClientsController {
     }
   }
 
+  @UseInterceptors(ClientInterceptor)
+  @UseGuards(JwtAuth)
   @Get('/:id')
   async getClientsById(
     @Param('id', new ParseUUIDPipe()) id: string,

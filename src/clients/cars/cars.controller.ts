@@ -8,6 +8,8 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { CarPagination } from './dtos/car-pagination.dto';
@@ -17,11 +19,14 @@ import { formatErrors } from 'src/utils/formatErrors';
 import { Cars } from './cars.entity';
 import { Error } from 'src/interfaces/error';
 import { GetAllReturn } from 'src/interfaces/getAllReturn';
+import { JwtAuth } from 'src/auth/guards/jwt.guard';
+import { ClientInterceptor } from 'src/interceptors/client.interceptor';
 
 @Controller('api/v1/clients/:id/cars')
 export class CarsController {
   constructor(private carsService: CarsService) {}
 
+  @UseGuards(JwtAuth)
   @Get()
   async listCars(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -34,6 +39,8 @@ export class CarsController {
     }
   }
 
+  @UseInterceptors(ClientInterceptor)
+  @UseGuards(JwtAuth)
   @Post()
   async addClientCar(
     @Body() createCarDto: CreateCarDto,
@@ -46,6 +53,8 @@ export class CarsController {
     }
   }
 
+  @UseInterceptors(ClientInterceptor)
+  @UseGuards(JwtAuth)
   @Patch('/:carId')
   async updateClientCar(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -59,6 +68,8 @@ export class CarsController {
     }
   }
 
+  @UseInterceptors(ClientInterceptor)
+  @UseGuards(JwtAuth)
   @Delete('/:carId')
   async removeClientCar(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -71,6 +82,7 @@ export class CarsController {
     }
   }
 
+  @UseGuards(JwtAuth)
   @Get('/:carId')
   async getClientCarById(
     @Param('id', new ParseUUIDPipe()) id: string,

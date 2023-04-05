@@ -4,15 +4,16 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  BadRequestException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { AuthMechanicsService } from './auth.mechanics.service';
 import { TokenDto } from './dtos/token.dto';
-import { AuthGuard } from './guards/auth.guard';
+import { JwtAuth } from './guards/jwt.guard';
 import { formatErrors } from 'src/utils/formatErrors';
 import { Error } from 'src/interfaces/error';
+import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
 
 @Controller('api/v1/mechanic')
 export class AuthMechanicsController {
@@ -29,7 +30,8 @@ export class AuthMechanicsController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuth)
+  @UseInterceptors(AuthInterceptor)
   @HttpCode(HttpStatus.OK)
   @Post('/updatePassword')
   async updatePasswordMechanic(@Body() loginMechanic: LoginUpdatePasswordDto) {
@@ -40,7 +42,8 @@ export class AuthMechanicsController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuth)
+  @UseInterceptors(AuthInterceptor)
   @Post('/refreshToken')
   async refreshToken(@Body() token: TokenDto): Promise<Object | Error> {
     try {
