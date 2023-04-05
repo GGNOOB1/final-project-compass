@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDate,
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -35,8 +36,8 @@ export class UpdateServicesDto {
   mechanicId: string;
 
   @IsOptional()
+  @IsDate()
   @IsNotEmpty()
-  @IsDateString()
   serviceEstimatedDeliveryDate: Date;
 
   @IsOptional()

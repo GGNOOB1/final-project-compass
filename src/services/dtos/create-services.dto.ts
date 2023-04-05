@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDate,
   IsEnum,
   IsNotEmpty,
   IsString,
@@ -28,7 +29,7 @@ export class CreateServicesDto {
   @IsUUID()
   mechanicId: string;
 
-  @IsString()
+  @IsDate()
   @IsNotEmpty()
   serviceEstimatedDeliveryDate: Date;
 

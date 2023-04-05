@@ -7,8 +7,8 @@ import {
   IsPhoneNumber,
   IsEmail,
   IsPostalCode,
+  IsDate,
 } from 'class-validator';
-import { DateValidator } from 'src/validators/date.validator';
 
 import { CpfCnpjValidator } from '../../validators/cpf-cnpj.validator';
 
@@ -30,8 +30,7 @@ export class CreateClientsDto {
   @IsNotEmpty()
   client_type: string;
 
-  @IsString()
-  @Validate(DateValidator)
+  @IsDate()
   @IsNotEmpty()
   birthday: Date;
 

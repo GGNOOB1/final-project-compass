@@ -9,6 +9,7 @@ import {
   IsEmail,
   IsPostalCode,
   IsOptional,
+  IsDate,
 } from 'class-validator';
 
 import { CpfCnpjValidator } from '../../validators/cpf-cnpj.validator';
@@ -34,7 +35,7 @@ export class UpdateClientsDto {
   @IsOptional()
   client_type: string;
 
-  @IsDateString()
+  @IsDate()
   @IsNotEmpty()
   @IsOptional()
   birthday: Date;

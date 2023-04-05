@@ -1,20 +1,18 @@
 import {
-  IsBoolean,
   IsNumber,
   IsNotEmpty,
   IsString,
   MaxLength,
   MinLength,
   Validate,
-  IsDateString,
   IsPhoneNumber,
   IsEmail,
   IsArray,
   IsEnum,
+  IsDate,
 } from 'class-validator';
 
 import { CpfValidator } from 'src/validators/cpf.validator';
-import { DateValidator } from 'src/validators/date.validator';
 import { Status } from '../utils/status-enum';
 
 export class CreateMechanicsDto {
@@ -29,8 +27,7 @@ export class CreateMechanicsDto {
   @IsNotEmpty()
   cpf: string;
 
-  @IsString()
-  @Validate(DateValidator)
+  @IsDate()
   @IsNotEmpty()
   birthday: Date;
 
@@ -68,8 +65,7 @@ export class CreateMechanicsDto {
   @IsArray()
   specialties: [string];
 
-  @IsString()
-  @Validate(DateValidator)
+  @IsDate()
   @IsNotEmpty()
   hiringDate: Date;
 
