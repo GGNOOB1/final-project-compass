@@ -22,6 +22,7 @@ import { GetAllReturn } from '../interfaces/getAllReturn';
 import { JwtAuth } from '../auth/guards/jwt.guard';
 import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
 import { DateInterceptor } from '../interceptors/date.interceptor';
+import { VerifyUniqueMechanicDataInterceptor } from 'src/interceptors/verifyUniqueMechanicData.interceptor';
 
 @Controller('api/v1/mechanics')
 export class MechanicsController {
@@ -39,7 +40,7 @@ export class MechanicsController {
     }
   }
 
-  @UseInterceptors(DateInterceptor)
+  @UseInterceptors(DateInterceptor, VerifyUniqueMechanicDataInterceptor)
   @Post()
   async createMechanics(
     @Body() createMechanicsDto: CreateMechanicsDto,
@@ -51,8 +52,11 @@ export class MechanicsController {
     }
   }
 
-  @UseInterceptors(MechanicInterceptor)
-  @UseInterceptors(DateInterceptor)
+  @UseInterceptors(
+    MechanicInterceptor,
+    DateInterceptor,
+    VerifyUniqueMechanicDataInterceptor,
+  )
   @UseGuards(JwtAuth)
   @Patch('/:id')
   async updateMechanics(
