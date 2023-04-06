@@ -107,4 +107,14 @@ export class ClientsService {
       password,
     });
   }
+
+  async findOneByCpfCnpj(cpf_cnpj: string) {
+    const client = await this.clientsRepository.findOneBy({ cpf_cnpj });
+
+    if (!client) {
+      return null;
+    }
+
+    return client;
+  }
 }

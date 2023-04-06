@@ -120,4 +120,14 @@ export class CarsService {
 
     return car;
   }
+
+  async findOneByLicensePlate(license: string) {
+    const car = await this.carsRepository.findOneBy({ license_plate: license });
+
+    if (!car) {
+      throw new NotFoundException("This license plate don't exist in database");
+    }
+
+    return car;
+  }
 }

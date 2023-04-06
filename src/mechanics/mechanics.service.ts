@@ -162,6 +162,16 @@ export class MechanicsService {
     return client;
   }
 
+  async findOneByCpf(cpf: string) {
+    const client = await this.mechanicsRepository.findOneBy({ cpf });
+
+    if (!client) {
+      return null;
+    }
+
+    return client;
+  }
+
   async updatePassword(id: string, password: string) {
     await this.mechanicsRepository.update(id, {
       password,
