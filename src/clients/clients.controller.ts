@@ -23,19 +23,16 @@ import { ClientInterceptor } from '../interceptors/client.interceptor';
 import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
 import { DateInterceptor } from '../interceptors/date.interceptor';
 
-import { VerifyUniqueClientDataInterceptor } from 'src/interceptors/verifyUniqueClientData.interceptor';
+import { VerifyUniqueClientDataInterceptor } from '../interceptors/verifyUniqueClientData.interceptor';
+import { DateFormatInterceptor } from '../interceptors/date-format.interceptor';
 
 @Controller('api/v1/clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
-  @Get('/test')
-  test() {
-    return 'hi';
-  }
-
   @UseGuards(JwtAuth)
   @UseInterceptors(MechanicInterceptor)
+  @UseInterceptors(DateFormatInterceptor)
   @Get()
   async listClients(
     @Query() clientPagination: ClientPagination,
@@ -48,7 +45,7 @@ export class ClientsController {
     }
   }
 
-  @UseInterceptors(DateInterceptor)
+  @UseInterceptors(DateInterceptor, DateFormatInterceptor)
   @UseInterceptors(VerifyUniqueClientDataInterceptor)
   @Post()
   async createClients(
@@ -65,6 +62,7 @@ export class ClientsController {
     ClientInterceptor,
     DateInterceptor,
     VerifyUniqueClientDataInterceptor,
+    DateFormatInterceptor,
   )
   @UseGuards(JwtAuth)
   @Patch('/:id')
@@ -80,7 +78,7 @@ export class ClientsController {
     }
   }
 
-  @UseInterceptors(ClientInterceptor)
+  @UseInterceptors(ClientInterceptor, DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Get('/:id')
   async getClientsById(

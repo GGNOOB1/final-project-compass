@@ -21,7 +21,7 @@ import { Error } from '../../interfaces/error';
 import { GetAllReturn } from '../../interfaces/getAllReturn';
 import { JwtAuth } from '../../auth/guards/jwt.guard';
 import { ClientInterceptor } from '../../interceptors/client.interceptor';
-import { VerifyUniqueCarDataInterceptor } from 'src/interceptors/verifyUniqueCarsData.interceptor';
+import { VerifyUniqueCarDataInterceptor } from '../../interceptors/verifyUniqueCarsData.interceptor';
 
 @Controller('api/v1/clients/:id/cars')
 export class CarsController {

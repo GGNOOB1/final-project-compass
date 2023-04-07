@@ -21,12 +21,14 @@ import { Services } from './services.entity';
 import { JwtAuth } from '../auth/guards/jwt.guard';
 import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
 import { DateInterceptor } from '../interceptors/date.interceptor';
+import { DateFormatInterceptor } from '../interceptors/date-format.interceptor';
 
 @Controller('api/v1/services')
 export class ServicesController {
   constructor(private servicesService: ServicesService) {}
 
   @UseGuards(JwtAuth)
+  @UseInterceptors(DateFormatInterceptor)
   @Get()
   async listServices(
     @Query() servicesPagination: ServicesPagination,
@@ -40,6 +42,7 @@ export class ServicesController {
 
   @UseInterceptors(MechanicInterceptor)
   @UseInterceptors(DateInterceptor)
+  @UseInterceptors(DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Post()
   async createServices(
@@ -54,6 +57,7 @@ export class ServicesController {
 
   @UseInterceptors(MechanicInterceptor)
   @UseInterceptors(DateInterceptor)
+  @UseInterceptors(DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:id')
   async updatesServices(
@@ -68,6 +72,7 @@ export class ServicesController {
     }
   }
 
+  @UseInterceptors(DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Get('/:id')
   async getServicesById(
