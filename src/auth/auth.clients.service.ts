@@ -7,6 +7,7 @@ import { verifyPasswordAndEmail } from './utils/verifyPasswordAndEmail';
 import { comparePasswords } from './utils/comparePasswords';
 import { verifyEmail } from './utils/verifyEmail';
 import { encryptPassword } from '../utils/encryptPassword';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthClientService {
@@ -15,16 +16,17 @@ export class AuthClientService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(loginClient: LoginUpdatePasswordDto) {
+  async signIn(loginClient: LoginUpdatePasswordDto, res: Response) {
     const user = await verifyPasswordAndEmail(
       this.clientsService,
       comparePasswords,
       loginClient,
     );
     const payload = { username: user['name'], sub: user['id'], type: 'client' };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    const token = await this.jwtService.signAsync(payload);
+
+    res.set('Authorization', 'Bearer ' + token);
+    res.status(200).json();
   }
 
   async updatePassword(loginClient: LoginUpdatePasswordDto) {

@@ -6,6 +6,7 @@ import { verifyPasswordAndEmail } from './utils/verifyPasswordAndEmail';
 import { comparePasswords } from './utils/comparePasswords';
 import { encryptPassword } from '../utils/encryptPassword';
 import { verifyEmail } from './utils/verifyEmail';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthMechanicsService {
@@ -14,7 +15,7 @@ export class AuthMechanicsService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(loginMechanic: LoginUpdatePasswordDto) {
+  async signIn(loginMechanic: LoginUpdatePasswordDto, res: Response) {
     const user = await verifyPasswordAndEmail(
       this.mechanicsService,
       comparePasswords,
@@ -26,9 +27,10 @@ export class AuthMechanicsService {
       sub: user['id'],
       type: 'mechanic',
     };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    const token = await this.jwtService.signAsync(payload);
+
+    res.set('Authorization', 'Bearer ' + token);
+    res.status(200).json();
   }
 
   async updatePassword(loginMechanic: LoginUpdatePasswordDto) {

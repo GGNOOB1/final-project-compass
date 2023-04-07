@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { JwtAuth } from './guards/jwt.guard';
 import { formatErrors } from '../utils/formatErrors';
 import { Error } from '../interfaces/error';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
+import { Response } from 'express';
 
 @Controller('api/v1/mechanic')
 export class AuthMechanicsController {
@@ -22,9 +24,10 @@ export class AuthMechanicsController {
   @Post('/login')
   async login(
     @Body() loginMechanic: LoginUpdatePasswordDto,
-  ): Promise<TokenDto | Error> {
+    @Res() res: Response,
+  ): Promise<TokenDto | Error | void> {
     try {
-      return await this.authMechanicService.signIn(loginMechanic);
+      return await this.authMechanicService.signIn(loginMechanic, res);
     } catch (error) {
       return formatErrors(error);
     }
