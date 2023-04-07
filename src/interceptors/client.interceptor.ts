@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 export class ClientInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
-    console.log(req.params.id);
     if (req['user'].type === 'mechanic') {
       throw new UnauthorizedException(
         'This route is only accessible to clients',

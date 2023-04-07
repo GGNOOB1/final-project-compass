@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { CarsService } from 'src/clients/cars/cars.service';
+import { CarsService } from '../clients/cars/cars.service';
 
 @Injectable()
 export class VerifyUniqueCarDataInterceptor implements NestInterceptor {

@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { MechanicsService } from 'src/mechanics/mechanics.service';
+import { MechanicsService } from '../mechanics/mechanics.service';
 
 @Injectable()
 export class VerifyUniqueMechanicDataInterceptor implements NestInterceptor {
