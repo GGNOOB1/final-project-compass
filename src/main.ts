@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DatabaseExceptionFilter } from './filters/dbExceptionFilter';
-import { ValidationExceptionFilter } from './filters/validationExceptionFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +12,6 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new DatabaseExceptionFilter());
-  app.useGlobalFilters(new ValidationExceptionFilter());
 
   await app.listen(3000);
 }
