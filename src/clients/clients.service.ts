@@ -69,7 +69,7 @@ export class ClientsService {
     });
 
     if (!client) {
-      throw new NotFoundException('This id does not exist');
+      throw new NotFoundException('This client id does not exist');
     }
 
     return client;
