@@ -40,9 +40,7 @@ export class ServicesController {
     }
   }
 
-  @UseInterceptors(MechanicInterceptor)
-  @UseInterceptors(DateInterceptor)
-  @UseInterceptors(DateFormatInterceptor)
+  @UseInterceptors(MechanicInterceptor, DateInterceptor, DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Post()
   async createServices(
@@ -55,9 +53,7 @@ export class ServicesController {
     }
   }
 
-  @UseInterceptors(MechanicInterceptor)
-  @UseInterceptors(DateInterceptor)
-  @UseInterceptors(DateFormatInterceptor)
+  @UseInterceptors(MechanicInterceptor, DateInterceptor, DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:id')
   async updatesServices(
@@ -65,7 +61,6 @@ export class ServicesController {
     @Body() updateServicesDto: UpdateServicesDto,
   ): Promise<Partial<Services> | Error> {
     try {
-      console.log(id);
       return this.servicesService.update(id, updateServicesDto);
     } catch (error) {
       return formatErrors(error);

@@ -31,8 +31,7 @@ export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
   @UseGuards(JwtAuth)
-  @UseInterceptors(MechanicInterceptor)
-  @UseInterceptors(DateFormatInterceptor)
+  @UseInterceptors(MechanicInterceptor, DateFormatInterceptor)
   @Get()
   async listClients(
     @Query() clientPagination: ClientPagination,
@@ -45,8 +44,11 @@ export class ClientsController {
     }
   }
 
-  @UseInterceptors(DateInterceptor, DateFormatInterceptor)
-  @UseInterceptors(VerifyUniqueClientDataInterceptor)
+  @UseInterceptors(
+    DateInterceptor,
+    DateFormatInterceptor,
+    VerifyUniqueClientDataInterceptor,
+  )
   @Post()
   async createClients(
     @Body() createClientsDto: CreateClientsDto,
