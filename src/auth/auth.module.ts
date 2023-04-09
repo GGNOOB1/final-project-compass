@@ -30,7 +30,7 @@ import { AuthMechanicsService } from './auth.mechanics.service';
     JwtModule.register({
       global: true,
       secret: process.env.SECRET_KEY,
-      signOptions: { expiresIn: '5m' },
+      signOptions: { expiresIn: '30m' },
     }),
   ],
 })
