@@ -15,6 +15,8 @@ import { Parts } from './parts/parts.entity';
 import { Services } from './services/services.entity';
 import { Specialties } from './mechanics/specialties.entity';
 import { PartsOrder } from './services/partsOrder.entity';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './filters/exception.filter';
 
 @Module({
   imports: [
@@ -44,6 +46,12 @@ import { PartsOrder } from './services/partsOrder.entity';
     ServicesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}
