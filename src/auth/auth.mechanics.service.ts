@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { MechanicsService } from '../mechanics/mechanics.service';
 import { LoginUpdatePasswordDto } from './dtos/login-Updatepassword.dto';
 import { JwtService } from '@nestjs/jwt/dist';
@@ -6,7 +10,7 @@ import { verifyPasswordAndEmail } from './utils/verifyPasswordAndEmail';
 import { comparePasswords } from './utils/comparePasswords';
 import { encryptPassword } from '../utils/encryptPassword';
 import { verifyEmail } from './utils/verifyEmail';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 @Injectable()
 export class AuthMechanicsService {
@@ -46,10 +50,24 @@ export class AuthMechanicsService {
     return;
   }
 
-  async refreshToken(currentToken: string, res: Response) {
+  async refreshToken(currentToken: string, req: Request, res: Response) {
     const verificatedToken = await this.jwtService.verifyAsync(currentToken);
 
+    if (verificatedToken.type !== 'mechanic') {
+      throw new UnauthorizedException(
+        'Something went wrong, This route is only accessible to mechanics',
+      );
+    }
+
+    if (req['user'].sub !== verificatedToken.sub) {
+      console.log('deu ruim');
+      throw new UnauthorizedException(
+        'The mechanic id you are trying to access is not yours',
+      );
+    }
+
     const user = await this.mechanicsService.findById(verificatedToken.sub);
+
     const payload = {
       username: user['name'],
       sub: user['id'],

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Post,
@@ -15,7 +14,7 @@ import { JwtAuth } from './guards/jwt.guard';
 import { formatErrors } from '../utils/formatErrors';
 import { Error } from '../interfaces/error';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 @Controller('api/v1/client')
 export class AuthClientsController {
@@ -29,7 +28,7 @@ export class AuthClientsController {
     try {
       return this.authClientService.signIn(loginClient, res);
     } catch (error) {
-      return formatErrors(error);
+      res.status(error.response.statusCode).json(formatErrors(error));
     }
   }
 
@@ -38,25 +37,30 @@ export class AuthClientsController {
   @Post('/updatePassword')
   async updatePasswordClient(
     @Body() loginClient: LoginUpdatePasswordDto,
+    @Res() res: Response,
   ): Promise<void | Error> {
     try {
       return this.authClientService.updatePassword(loginClient);
     } catch (error) {
-      return formatErrors(error);
+      res.status(error.response.statusCode).json(formatErrors(error));
     }
   }
 
   @UseGuards(JwtAuth)
-  @UseInterceptors(AuthInterceptor)
   @Post('/refreshToken')
   async refreshToken(
     @Body() token: TokenDto,
+    @Req() req: Request,
     @Res() res: Response,
-  ): Promise<Object | Error | void> {
+  ): Promise<Error | void> {
     try {
-      return await this.authClientService.refreshToken(token.access_token, res);
+      return await this.authClientService.refreshToken(
+        token.access_token,
+        req,
+        res,
+      );
     } catch (error) {
-      return formatErrors(error);
+      res.status(error.response.statusCode).json(formatErrors(error));
     }
   }
 }

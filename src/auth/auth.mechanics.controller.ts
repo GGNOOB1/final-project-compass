@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Post,
   Res,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,7 +16,7 @@ import { JwtAuth } from './guards/jwt.guard';
 import { formatErrors } from '../utils/formatErrors';
 import { Error } from '../interfaces/error';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 @Controller('api/v1/mechanic')
 export class AuthMechanicsController {
@@ -29,7 +30,7 @@ export class AuthMechanicsController {
     try {
       return await this.authMechanicService.signIn(loginMechanic, res);
     } catch (error) {
-      return formatErrors(error);
+      res.status(error.response.statusCode).json(formatErrors(error));
     }
   }
 
@@ -37,11 +38,14 @@ export class AuthMechanicsController {
   @UseInterceptors(AuthInterceptor)
   @HttpCode(HttpStatus.OK)
   @Post('/updatePassword')
-  async updatePasswordMechanic(@Body() loginMechanic: LoginUpdatePasswordDto) {
+  async updatePasswordMechanic(
+    @Body() loginMechanic: LoginUpdatePasswordDto,
+    @Res() res: Response,
+  ) {
     try {
       return await this.authMechanicService.updatePassword(loginMechanic);
     } catch (error) {
-      return formatErrors(error);
+      res.status(error.response.statusCode).json(formatErrors(error));
     }
   }
 
@@ -50,15 +54,17 @@ export class AuthMechanicsController {
   @Post('/refreshToken')
   async refreshToken(
     @Body() token: TokenDto,
-    res: Response,
+    @Res() res: Response,
+    @Req() req: Request,
   ): Promise<Object | Error | void> {
     try {
       return await this.authMechanicService.refreshToken(
         token.access_token,
+        req,
         res,
       );
     } catch (error) {
-      return formatErrors(error);
+      res.status(error.response.statusCode).json(formatErrors(error));
     }
   }
 }
