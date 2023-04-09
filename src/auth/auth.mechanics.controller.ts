@@ -48,9 +48,15 @@ export class AuthMechanicsController {
   @UseGuards(JwtAuth)
   @UseInterceptors(AuthInterceptor)
   @Post('/refreshToken')
-  async refreshToken(@Body() token: TokenDto): Promise<Object | Error> {
+  async refreshToken(
+    @Body() token: TokenDto,
+    res: Response,
+  ): Promise<Object | Error | void> {
     try {
-      return await this.authMechanicService.refreshToken(token.access_token);
+      return await this.authMechanicService.refreshToken(
+        token.access_token,
+        res,
+      );
     } catch (error) {
       return formatErrors(error);
     }

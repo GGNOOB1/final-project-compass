@@ -49,9 +49,12 @@ export class AuthClientsController {
   @UseGuards(JwtAuth)
   @UseInterceptors(AuthInterceptor)
   @Post('/refreshToken')
-  async refreshToken(@Body() token: TokenDto): Promise<Object | Error> {
+  async refreshToken(
+    @Body() token: TokenDto,
+    @Res() res: Response,
+  ): Promise<Object | Error | void> {
     try {
-      return await this.authClientService.refreshToken(token.access_token);
+      return await this.authClientService.refreshToken(token.access_token, res);
     } catch (error) {
       return formatErrors(error);
     }
