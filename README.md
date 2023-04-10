@@ -2,7 +2,7 @@
 
 Last challenge implementing all the technologies studied during the internship. Creating an auto car system to manage customers, mechanics, services, cars and parts.
 
-[Deploy]()
+[Deploy](https://auto-car-project.onrender.com)
 
 ## Info
 
@@ -18,7 +18,7 @@ Last challenge implementing all the technologies studied during the internship. 
 Clone the project
 
 ```bash
-  git clone https://link-para-o-projeto
+  git clone https://github.com/GGNOOB1/final-project-compass/tree/week-two
 ```
 
 Enter the project directory
