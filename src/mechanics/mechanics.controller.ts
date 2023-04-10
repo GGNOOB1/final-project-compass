@@ -31,9 +31,9 @@ import {
   ApiBody,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { GetAllMechanicsDto } from 'src/swagger/mechanics/getAllMechanics.dto';
+import { GetAllMechanicsDto } from '../swagger/mechanics/getAllMechanics.dto';
 import { Status } from './utils/status-enum';
-import { PostMechanicsDto } from 'src/swagger/mechanics/PostMechanic.dto';
+import { PostMechanicsDto } from '../swagger/mechanics/PostMechanic.dto';
 
 @ApiTags('mechanics')
 @Controller('api/v1/mechanics')
@@ -98,7 +98,7 @@ export class MechanicsController {
   }
 
   @ApiOperation({ summary: 'Update a mechanic user' })
-  @ApiBody({ type: PostMechanicsDto })
+  @ApiBody({ type: PostMechanicsDto, required: false })
   @ApiResponse({
     status: 200,
     description: 'success',

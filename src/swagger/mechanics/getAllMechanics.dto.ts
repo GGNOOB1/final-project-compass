@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ArrayMinSize, IsArray, ValidateNested } from 'class-validator';
-import { Specialties } from 'src/mechanics/specialties.entity';
+import { Specialties } from '../../mechanics/specialties.entity';
 
 export class GetAllMechanicsDto {
   @ApiProperty()

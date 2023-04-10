@@ -29,15 +29,9 @@ export class CarsService {
       color: createCarDto.color,
       client,
     });
-    await this.carsRepository.save(car);
+    const newCar = await this.carsRepository.save(car);
 
-    return {
-      license_plate: car.license_plate,
-      model: car.model,
-      year: car.year,
-      manufacturer: car.manufacturer,
-      color: car.color,
-    };
+    return newCar;
   }
 
   async find(id: string, carPagination: CarPagination) {

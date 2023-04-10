@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ArrayMinSize, IsArray, ValidateNested } from 'class-validator';
-import { Cars } from 'src/clients/cars/cars.entity';
-import { CreateCarDto } from 'src/clients/cars/dtos/create-car.dto';
+import { CreateCarDto } from '../../clients/cars/dtos/create-car.dto';
 
 export class GetAllClientsDto {
   @ApiProperty()

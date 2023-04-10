@@ -30,7 +30,7 @@ import {
   ApiBody,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { GetCar } from 'src/swagger/cars/getCar.dto';
+import { GetCar } from '../../swagger/cars/getCar.dto';
 
 @ApiTags('clients > cars')
 @Controller('api/v1/clients/:id/cars')
@@ -75,6 +75,10 @@ export class CarsController {
     description: 'created',
     type: GetCar,
   })
+  @ApiResponse({
+    status: 404,
+    description: 'The client id was not found',
+  })
   @UseInterceptors(ClientInterceptor, VerifyUniqueCarDataInterceptor)
   @UseGuards(JwtAuth)
   @Post()
@@ -90,11 +94,15 @@ export class CarsController {
   }
 
   @ApiOperation({ summary: 'Update a client car ' })
-  @ApiBody({ type: UpdateCarDto })
+  @ApiBody({ type: UpdateCarDto, required: false })
   @ApiResponse({
     status: 201,
     description: 'created',
     type: GetCar,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'The client id was not found',
   })
   @UseInterceptors(ClientInterceptor, VerifyUniqueCarDataInterceptor)
   @UseGuards(JwtAuth)
@@ -116,6 +124,14 @@ export class CarsController {
     status: 204,
     description: 'successful response',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'The client id was not found',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'The car id was not found',
+  })
   @UseInterceptors(ClientInterceptor)
   @UseGuards(JwtAuth)
   @Delete('/:carId')
@@ -135,6 +151,10 @@ export class CarsController {
     status: 201,
     description: 'created',
     type: GetCar,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'The client id was not found',
   })
   @UseGuards(JwtAuth)
   @Get('/:carId')

@@ -1,9 +1,7 @@
-import { OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { ArrayMinSize, IsArray, ValidateNested } from 'class-validator';
-import { CreateCarDto } from 'src/clients/cars/dtos/create-car.dto';
+import { CreateCarDto } from '../../clients/cars/dtos/create-car.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateClientsDto } from 'src/clients/dtos/create-clients.dto';
 
 export class GetOneClientsDto {
   @ApiProperty()

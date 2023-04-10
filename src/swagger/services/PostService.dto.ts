@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ArrayMinSize, IsArray, ValidateNested } from 'class-validator';
-import { PartsOrder } from 'src/services/partsOrder.entity';
+import { PartsOrder } from '../../services/partsOrder.entity';
 
 export class PostServicesDto {
   @ApiProperty()

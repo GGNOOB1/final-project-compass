@@ -29,9 +29,9 @@ import {
   ApiBody,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { GetAllServicesDto } from 'src/swagger/services/getAllService.dto';
+import { GetAllServicesDto } from '../swagger/services/getAllService.dto';
 import { Status } from './utils/status-enum';
-import { PostServicesDto } from 'src/swagger/services/PostService.dto';
+import { PostServicesDto } from '../swagger/services/PostService.dto';
 
 @ApiTags('services')
 @Controller('api/v1/services')
@@ -96,7 +96,7 @@ export class ServicesController {
   }
 
   @ApiOperation({ summary: 'Update a service' })
-  @ApiBody({ type: PostServicesDto })
+  @ApiBody({ type: PostServicesDto, required: false })
   @ApiResponse({
     status: 200,
     description: 'success',

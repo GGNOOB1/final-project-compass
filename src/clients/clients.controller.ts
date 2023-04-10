@@ -31,10 +31,10 @@ import {
   ApiBody,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { GetAllClientsDto } from 'src/swagger/clients/getAllClients.dto';
-import { PostResponseClient } from 'src/swagger/clients/postResponseClient.dto';
-import { GetOneClientsDto } from 'src/swagger/clients/getOneClient.dto';
-import { UpdateClientSwagger } from 'src/swagger/clients/updateClient.dto';
+import { GetAllClientsDto } from '../swagger/clients/getAllClients.dto';
+import { PostResponseClient } from '../swagger/clients/postResponseClient.dto';
+import { GetOneClientsDto } from '../swagger/clients/getOneClient.dto';
+import { UpdateClientSwagger } from '../swagger/clients/updateClient.dto';
 
 @ApiTags('clients')
 @Controller('api/v1/clients')
@@ -103,7 +103,7 @@ export class ClientsController {
   }
 
   @ApiOperation({ summary: 'Update a client user by id' })
-  @ApiBody({ type: UpdateClientSwagger })
+  @ApiBody({ type: UpdateClientSwagger, required: false })
   @ApiResponse({
     status: 200,
     description: 'success',

@@ -27,7 +27,7 @@ import {
   ApiBody,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { GetAllPartsDto } from 'src/swagger/parts/getAllParts.dto';
+import { GetAllPartsDto } from '../swagger/parts/getAllParts.dto';
 
 @ApiTags('parts')
 @Controller('api/v1/parts')
@@ -86,7 +86,7 @@ export class PartsController {
   }
 
   @ApiOperation({ summary: 'Update a part by id' })
-  @ApiBody({ type: CreatePartsDto })
+  @ApiBody({ type: CreatePartsDto, required: false })
   @ApiResponse({
     status: 200,
     description: 'success',
