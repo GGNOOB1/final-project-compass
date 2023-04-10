@@ -120,23 +120,30 @@ describe('Clients (e2e)', () => {
         })
         .expect(201);
 
-      carId = response.body.carId;
+      carId = response.body.id;
     });
 
     it('Must be get all cars', async () => {
       const response = await request(app.getHttpServer())
         .get('/api/v1/clients/' + id + '/cars')
         .set('Authorization', `${token}`)
-        .send()
+        .query({ limit: 10, offset: 0 })
         .expect(200);
     });
 
     it('Must update a car from your customer id and car id', async () => {
-      console.log(carId);
       const response = await request(app.getHttpServer())
         .patch('/api/v1/clients/' + id + '/cars/' + carId)
         .set('Authorization', `${token}`)
-        .send()
+        .send({ year: 2023 })
+        .expect(200);
+      expect(response.body.year).toEqual(2023);
+    });
+
+    it('Must delete a car from your customer id and car id', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/api/v1/clients/' + id + '/cars/' + carId)
+        .set('Authorization', `${token}`)
         .expect(200);
     });
   });
