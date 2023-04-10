@@ -57,6 +57,7 @@ describe('Clients (e2e)', () => {
 
     let token: string;
     let id: string;
+    let carId: string;
 
     it('It should create a client user and return it in the response', async () => {
       const response = await request(app.getHttpServer())
@@ -105,12 +106,49 @@ describe('Clients (e2e)', () => {
         .expect(200);
       expect(response.body.client_type).toEqual('normal');
     });
+
+    it('Must be possible to create a car from the customer id', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/clients/' + id + '/cars')
+        .set('Authorization', `${token}`)
+        .send({
+          license_plate: '3fgf532-5fh37-4462-f33c-2c963ffl6aha6',
+          model: 'Jeep AMG',
+          year: 2022,
+          manufacturer: 'Mercedes',
+          color: 'Preto',
+        })
+        .expect(201);
+
+      carId = response.body.carId;
+    });
+
+    it('Must be get all cars', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/clients/' + id + '/cars')
+        .set('Authorization', `${token}`)
+        .send()
+        .expect(200);
+    });
+
+    it('Must update a car from your customer id and car id', async () => {
+      console.log(carId);
+      const response = await request(app.getHttpServer())
+        .patch('/api/v1/clients/' + id + '/cars/' + carId)
+        .set('Authorization', `${token}`)
+        .send()
+        .expect(200);
+    });
   });
 
   afterAll(async () => {
     const clientsRepository = moduleFixture.get<Repository<Clients>>(
       getRepositoryToken(Clients),
     );
+    const carsRepository = moduleFixture.get<Repository<Cars>>(
+      getRepositoryToken(Cars),
+    );
+    await carsRepository.createQueryBuilder().delete().from(Cars).execute();
     await clientsRepository
       .createQueryBuilder()
       .delete()
