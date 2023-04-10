@@ -23,11 +23,38 @@ import { GetAllReturn } from '../../interfaces/getAllReturn';
 import { JwtAuth } from '../../auth/guards/jwt.guard';
 import { ClientInterceptor } from '../../interceptors/client.interceptor';
 import { VerifyUniqueCarDataInterceptor } from '../../interceptors/verifyUniqueCarsData.interceptor';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiBody,
+  ApiTags,
+} from '@nestjs/swagger/dist';
+import { GetCar } from 'src/swagger/cars/getCar.dto';
 
+@ApiTags('clients > cars')
 @Controller('api/v1/clients/:id/cars')
 export class CarsController {
   constructor(private carsService: CarsService) {}
 
+  @ApiOperation({ summary: 'Get all client cars from the database' })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetCar,
+    isArray: true,
+  })
+  @ApiQuery({ name: 'limit', required: false, type: 'string' })
+  @ApiQuery({ name: 'offset', required: false, type: 'string' })
+  @ApiQuery({ name: 'license_plate', required: false, type: 'string' })
+  @ApiQuery({ name: 'model', required: false, type: 'string' })
+  @ApiQuery({ name: 'year', required: false, type: 'number' })
+  @ApiQuery({ name: 'manufacturer', required: false, type: 'string' })
+  @ApiQuery({ name: 'color', required: false, type: 'string' })
+  @ApiResponse({
+    status: 404,
+    description: 'There are no cars in the database',
+  })
   @UseGuards(JwtAuth)
   @Get()
   async listCars(
@@ -41,6 +68,13 @@ export class CarsController {
     }
   }
 
+  @ApiOperation({ summary: 'Create a client car ' })
+  @ApiBody({ type: CreateCarDto })
+  @ApiResponse({
+    status: 201,
+    description: 'created',
+    type: GetCar,
+  })
   @UseInterceptors(ClientInterceptor, VerifyUniqueCarDataInterceptor)
   @UseGuards(JwtAuth)
   @Post()
@@ -55,6 +89,13 @@ export class CarsController {
     }
   }
 
+  @ApiOperation({ summary: 'Update a client car ' })
+  @ApiBody({ type: UpdateCarDto })
+  @ApiResponse({
+    status: 201,
+    description: 'created',
+    type: GetCar,
+  })
   @UseInterceptors(ClientInterceptor, VerifyUniqueCarDataInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:carId')
@@ -70,6 +111,11 @@ export class CarsController {
     }
   }
 
+  @ApiOperation({ summary: 'Delete a client car ' })
+  @ApiResponse({
+    status: 204,
+    description: 'successful response',
+  })
   @UseInterceptors(ClientInterceptor)
   @UseGuards(JwtAuth)
   @Delete('/:carId')
@@ -84,6 +130,12 @@ export class CarsController {
     }
   }
 
+  @ApiOperation({ summary: 'Get a client car ' })
+  @ApiResponse({
+    status: 201,
+    description: 'created',
+    type: GetCar,
+  })
   @UseGuards(JwtAuth)
   @Get('/:carId')
   async getClientCarById(

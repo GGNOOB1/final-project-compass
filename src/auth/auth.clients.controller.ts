@@ -15,11 +15,19 @@ import { formatErrors } from '../utils/formatErrors';
 import { Error } from '../interfaces/error';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { Response, Request } from 'express';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('login')
 @Controller('api/v1/client')
 export class AuthClientsController {
   constructor(private authClientService: AuthClientService) {}
 
+  @ApiOperation({ summary: 'Login client' })
+  @ApiBody({ type: LoginUpdatePasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'ok',
+  })
   @Post('/login')
   async login(
     @Body() loginClient: LoginUpdatePasswordDto,
@@ -28,24 +36,35 @@ export class AuthClientsController {
     try {
       return this.authClientService.signIn(loginClient, res);
     } catch (error) {
-      res.status(error.response.statusCode).json(formatErrors(error));
+      return formatErrors(error);
     }
   }
 
+  @ApiOperation({ summary: 'Update password client' })
+  @ApiBody({ type: LoginUpdatePasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'ok',
+  })
   @UseGuards(JwtAuth)
   @UseInterceptors(AuthInterceptor)
   @Post('/updatePassword')
   async updatePasswordClient(
     @Body() loginClient: LoginUpdatePasswordDto,
-    @Res() res: Response,
   ): Promise<void | Error> {
     try {
       return this.authClientService.updatePassword(loginClient);
     } catch (error) {
-      res.status(error.response.statusCode).json(formatErrors(error));
+      return formatErrors(error);
     }
   }
 
+  @ApiOperation({ summary: 'refresh token client' })
+  @ApiBody({ type: TokenDto })
+  @ApiResponse({
+    status: 200,
+    description: 'ok',
+  })
   @UseGuards(JwtAuth)
   @Post('/refreshToken')
   async refreshToken(
@@ -60,7 +79,7 @@ export class AuthClientsController {
         res,
       );
     } catch (error) {
-      res.status(error.response.statusCode).json(formatErrors(error));
+      return formatErrors(error);
     }
   }
 }

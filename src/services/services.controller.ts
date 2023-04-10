@@ -22,11 +22,46 @@ import { JwtAuth } from '../auth/guards/jwt.guard';
 import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
 import { DateInterceptor } from '../interceptors/date.interceptor';
 import { DateFormatInterceptor } from '../interceptors/date-format.interceptor';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiBody,
+  ApiTags,
+} from '@nestjs/swagger/dist';
+import { GetAllServicesDto } from 'src/swagger/services/getAllService.dto';
+import { Status } from './utils/status-enum';
+import { PostServicesDto } from 'src/swagger/services/PostService.dto';
 
+@ApiTags('services')
 @Controller('api/v1/services')
 export class ServicesController {
   constructor(private servicesService: ServicesService) {}
 
+  @ApiOperation({ summary: 'Get all services from the database' })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetAllServicesDto,
+    isArray: true,
+  })
+  @ApiQuery({ name: 'limit', required: false, type: 'string' })
+  @ApiQuery({ name: 'offset', required: false, type: 'string' })
+  @ApiQuery({ name: 'clientId', required: false, type: 'string' })
+  @ApiQuery({ name: 'carId', required: false, type: 'string' })
+  @ApiQuery({ name: 'mechanicId', required: false, type: 'string' })
+  @ApiQuery({
+    name: 'serviceEstimatedDeliveryDate',
+    required: false,
+    type: 'number',
+  })
+  @ApiQuery({ name: 'description', required: false, type: 'string' })
+  @ApiQuery({ name: 'status', enum: Status, required: false, type: 'string' })
+  @ApiQuery({ name: 'unitPrice', required: false, type: 'string' })
+  @ApiResponse({
+    status: 404,
+    description: 'There are no services in the database',
+  })
   @UseGuards(JwtAuth)
   @UseInterceptors(DateFormatInterceptor)
   @Get()
@@ -40,6 +75,13 @@ export class ServicesController {
     }
   }
 
+  @ApiOperation({ summary: 'Create a service' })
+  @ApiBody({ type: PostServicesDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Created',
+    type: GetAllServicesDto,
+  })
   @UseInterceptors(MechanicInterceptor, DateInterceptor, DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Post()
@@ -53,6 +95,13 @@ export class ServicesController {
     }
   }
 
+  @ApiOperation({ summary: 'Update a service' })
+  @ApiBody({ type: PostServicesDto })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetAllServicesDto,
+  })
   @UseInterceptors(MechanicInterceptor, DateInterceptor, DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:id')
@@ -67,6 +116,12 @@ export class ServicesController {
     }
   }
 
+  @ApiOperation({ summary: 'Get service by id' })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetAllServicesDto,
+  })
   @UseInterceptors(DateFormatInterceptor)
   @UseGuards(JwtAuth)
   @Get('/:id')

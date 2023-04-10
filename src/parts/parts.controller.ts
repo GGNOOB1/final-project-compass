@@ -20,11 +20,38 @@ import { Error } from '../interfaces/error';
 import { Parts } from './parts.entity';
 import { JwtAuth } from '../auth/guards/jwt.guard';
 import { MechanicInterceptor } from '../interceptors/mechanic.interceptor';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiBody,
+  ApiTags,
+} from '@nestjs/swagger/dist';
+import { GetAllPartsDto } from 'src/swagger/parts/getAllParts.dto';
 
+@ApiTags('parts')
 @Controller('api/v1/parts')
 export class PartsController {
   constructor(private partsService: PartsService) {}
 
+  @ApiOperation({ summary: 'Get all mechanics from the database' })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetAllPartsDto,
+    isArray: true,
+  })
+  @ApiQuery({ name: 'limit', required: false, type: 'string' })
+  @ApiQuery({ name: 'offset', required: false, type: 'string' })
+  @ApiQuery({ name: 'partId', required: false, type: 'string' })
+  @ApiQuery({ name: 'title', required: false, type: 'string' })
+  @ApiQuery({ name: 'description', required: false, type: 'string' })
+  @ApiQuery({ name: 'qtd', required: false, type: 'number' })
+  @ApiQuery({ name: 'unitPrice', required: false, type: 'string' })
+  @ApiResponse({
+    status: 404,
+    description: 'There are no parts in the database',
+  })
   @UseInterceptors(MechanicInterceptor)
   @UseGuards(JwtAuth)
   @Get()
@@ -38,6 +65,13 @@ export class PartsController {
     }
   }
 
+  @ApiOperation({ summary: 'Create a part' })
+  @ApiBody({ type: CreatePartsDto })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetAllPartsDto,
+  })
   @UseInterceptors(MechanicInterceptor)
   @UseGuards(JwtAuth)
   @Post()
@@ -51,6 +85,13 @@ export class PartsController {
     }
   }
 
+  @ApiOperation({ summary: 'Update a part by id' })
+  @ApiBody({ type: CreatePartsDto })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetAllPartsDto,
+  })
   @UseInterceptors(MechanicInterceptor)
   @UseGuards(JwtAuth)
   @Patch('/:id')
@@ -65,6 +106,12 @@ export class PartsController {
     }
   }
 
+  @ApiOperation({ summary: 'Get part by id from the database' })
+  @ApiResponse({
+    status: 200,
+    description: 'success',
+    type: GetAllPartsDto,
+  })
   @UseInterceptors(MechanicInterceptor)
   @UseGuards(JwtAuth)
   @Get('/:id')
