@@ -8,6 +8,7 @@ import { Cars } from '../src/clients/cars/cars.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '../src/auth/auth.module';
 import { Repository } from 'typeorm';
+import { response } from 'express';
 
 describe('Clients (e2e)', () => {
   let app: INestApplication;
@@ -36,7 +37,7 @@ describe('Clients (e2e)', () => {
     await app.init();
   });
 
-  describe('Testing post route - Create client', () => {
+  describe('Testing clients e cars routes', () => {
     let user = {
       name: 'Usuario teste',
       cpf_cnpj: '297.337.900-87',
@@ -54,12 +55,15 @@ describe('Clients (e2e)', () => {
       skip: 1,
     };
 
+    let token: string;
+    let id: string;
+
     it('It should create a client user and return it in the response', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/clients')
         .send(user)
         .expect(201);
-
+      id = response.body.id;
       expect(response.body.name).toEqual(user.name);
       expect(response.body.cpf_cnpj).toEqual(user.cpf_cnpj);
       expect(response.body.client_type).toEqual(user.client_type);
@@ -74,15 +78,33 @@ describe('Clients (e2e)', () => {
       expect(response.body.neighbourhood).toEqual(user.neighbourhood);
       expect(response.body.city).toEqual(user.city);
     });
-  });
+    it('Should throw an unauthorized error for trying to access without token', () => {
+      return request(app.getHttpServer()).get('/api/v1/clients').expect(401);
+    });
 
-  it('get', () => {
-    return request(app.getHttpServer())
-      .get('/api/v1/clients')
-      .expect(200)
-      .then((data) => {
-        console.log(data);
-      });
+    it('You should log in and receive the valid token', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/client/login')
+        .send({ email: 'teste3@gmail.com', password: 'gege122' })
+        .expect(200);
+      token = response.header.authorization;
+    });
+
+    it('Must return data from a client', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/clients/' + id)
+        .set('Authorization', `${token}`)
+        .expect(200);
+    });
+
+    it('You should update a customers data', async () => {
+      let response = await request(app.getHttpServer())
+        .patch('/api/v1/clients/' + id)
+        .set('Authorization', `${token}`)
+        .send({ client_type: 'normal' })
+        .expect(200);
+      expect(response.body.client_type).toEqual('normal');
+    });
   });
 
   afterAll(async () => {
