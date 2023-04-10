@@ -40,7 +40,7 @@ export class ClientsService {
     });
 
     if (clients.length === 0) {
-      throw new NotFoundException('Data not found');
+      throw new NotFoundException('There are no clients in the database');
     }
 
     removePasswordInArrays(clients);
