@@ -12,3 +12,14 @@ services:
       - ./data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+  db_test:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 122edoragl
+      POSTGRES_DB: autocar_db_test
+    volumes:
+      - ./data_test:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
