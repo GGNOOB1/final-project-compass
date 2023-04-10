@@ -14,6 +14,7 @@ import {
 
 import { CpfValidator } from '../../validators/cpf.validator';
 import { Status } from '../utils/status-enum';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMechanicsDto {
   @IsString()
